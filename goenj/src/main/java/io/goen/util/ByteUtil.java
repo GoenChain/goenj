@@ -27,8 +27,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.google.common.primitives.UnsignedBytes;
 import org.spongycastle.util.encoders.Hex;
 
+/**
+ * This is borrowed from ethereumJ
+ */
 public class ByteUtil {
 
 	public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
@@ -250,7 +254,7 @@ public class ByteUtil {
 	 *            array contains the values
 	 * @return unsigned positive int value.
 	 */
-	public static int byteArrayToInt(byte[] b) {
+	public static int bytesToInt(byte[] b) {
 		if (b == null || b.length == 0)
 			return 0;
 		return new BigInteger(1, b).intValue();
@@ -265,7 +269,7 @@ public class ByteUtil {
 	 *            array contains the values
 	 * @return unsigned positive long value.
 	 */
-	public static long byteArrayToLong(byte[] b) {
+	public static long bytesToLong(byte[] b) {
 		if (b == null || b.length == 0)
 			return 0;
 		return new BigInteger(1, b).longValue();
@@ -688,6 +692,15 @@ public class ByteUtil {
 
 		String ip = sb.toString();
 		return ip;
+	}
+
+	public static byte[] ipTobytes(String ip) {
+		byte [] ipBytes  = new byte[4];
+		String[] splitPart = ip.split(".");
+		for(int i =0 ; i < 4;i++){
+			ipBytes[i] = (byte) Integer.valueOf(splitPart[i]).intValue();
+		}
+		return ipBytes;
 	}
 
 	/**

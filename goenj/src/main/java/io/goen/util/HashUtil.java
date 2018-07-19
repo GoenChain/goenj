@@ -31,7 +31,9 @@ import org.spongycastle.crypto.digests.RIPEMD160Digest;
 import org.spongycastle.util.encoders.Hex;
 
 
-
+/**
+ * This is borrowed from ethereumJ
+ */
 
 public class HashUtil {
 
