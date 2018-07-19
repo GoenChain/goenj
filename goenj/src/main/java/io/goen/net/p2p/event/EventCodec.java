@@ -4,10 +4,12 @@ import java.util.List;
 
 import io.goen.core.GoenConfig;
 import io.goen.net.crypto.ECDSASignature;
+import io.goen.net.p2p.P2PMessage;
 import io.goen.util.ByteUtil;
 import io.goen.util.FastByteComparisons;
 import io.goen.util.HashUtil;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.handler.codec.MessageToMessageCodec;
@@ -17,11 +19,11 @@ import org.spongycastle.util.BigIntegers;
  * [mdc(32byte)][version(1byte)][type(1byte)][signature(65byte)][data(undefined)
  * ]
  */
-public class EventCodec extends MessageToMessageCodec<DatagramPacket, Event> {
+public class EventCodec extends MessageToMessageCodec<DatagramPacket, P2PMessage> {
 	@Override
-	protected void encode(ChannelHandlerContext channelHandlerContext, Event event, List<Object> list)
+	protected void encode(ChannelHandlerContext channelHandlerContext, P2PMessage message, List<Object> list)
 			throws Exception {
-
+		Event event = message.getEvent();
 		byte[] checkData = new byte[1 + event.getData().length];
 		checkData[0] = event.getType()[0];
 		checkData[1] = event.getVersion()[0];
@@ -39,20 +41,21 @@ public class EventCodec extends MessageToMessageCodec<DatagramPacket, Event> {
 		byte[] mdc = HashUtil.sha256(forSha);
 
 		byte[] encodedData = ByteUtil.merge(mdc, forSha);
-		list.add(encodedData);
+		DatagramPacket packet = new DatagramPacket(Unpooled.copiedBuffer(encodedData), message.getInetSocketAddress());
+		list.add(packet);
 	}
 
 	/**
 	 *
 	 * @param channelHandlerContext
-	 * @param datagramPacket
+	 * @param packet
 	 * @param list
 	 * @throws Exception
 	 */
 	@Override
-	protected void decode(ChannelHandlerContext channelHandlerContext, DatagramPacket datagramPacket,
+	protected void decode(ChannelHandlerContext channelHandlerContext, DatagramPacket packet,
 			List<Object> list) throws Exception {
-		ByteBuf buf = datagramPacket.content();
+		ByteBuf buf = packet.content();
 		byte[] encodedData = new byte[buf.readableBytes()];
 		buf.readBytes(encodedData);
 
@@ -110,6 +113,8 @@ public class EventCodec extends MessageToMessageCodec<DatagramPacket, Event> {
 		event.setType(type);
 		event.setData(data);
 		event.parse(data);
-		list.add(event);
+
+		P2PMessage message = new P2PMessage(packet.sender(),event);
+		list.add(message);
 	}
 }

@@ -718,7 +718,7 @@ public class RLP {
             return new DecodeResult(pos + 1 + len, copyOfRange(data, pos + 1, pos + 1 + len));
         } else if (prefix < OFFSET_SHORT_LIST) {  // [0xb8, 0xbf]
             int lenlen = prefix - OFFSET_LONG_ITEM; // length of length the encoded bytes
-            int lenbytes = ByteUtil.byteArrayToInt(copyOfRange(data, pos + 1, pos + 1 + lenlen)); // length of encoded bytes
+            int lenbytes = ByteUtil.bytesToInt(copyOfRange(data, pos + 1, pos + 1 + lenlen)); // length of encoded bytes
             return new DecodeResult(pos + 1 + lenlen + lenbytes, copyOfRange(data, pos + 1 + lenlen, pos + 1 + lenlen
                     + lenbytes));
         } else if (prefix <= OFFSET_LONG_LIST) {  // [0xc0, 0xf7]
@@ -728,7 +728,7 @@ public class RLP {
             return decodeList(data, pos, prevPos, len);
         } else if (prefix <= 0xFF) {  // [0xf8, 0xff]
             int lenlen = prefix - OFFSET_LONG_LIST; // length of length the encoded list
-            int lenlist = ByteUtil.byteArrayToInt(copyOfRange(data, pos + 1, pos + 1 + lenlen)); // length of encoded bytes
+            int lenlist = ByteUtil.bytesToInt(copyOfRange(data, pos + 1, pos + 1 + lenlen)); // length of encoded bytes
             pos = pos + lenlen + 1; // start at position of first element in list
             int prevPos = lenlist;
             return decodeList(data, pos, prevPos, lenlist);
@@ -807,7 +807,7 @@ public class RLP {
                 pos += len + 1;
             } else if (prefix < OFFSET_SHORT_LIST) {  // [0xb8, 0xbf]
                 int lenlen = prefix - OFFSET_LONG_ITEM; // length of length the encoded bytes
-                int lenbytes = ByteUtil.byteArrayToInt(copyOfRange(data, pos + 1, pos + 1 + lenlen)); // length of encoded bytes
+                int lenbytes = ByteUtil.bytesToInt(copyOfRange(data, pos + 1, pos + 1 + lenlen)); // length of encoded bytes
                 ret.add(pos + 1 + lenlen, lenbytes, false);
                 pos += 1 + lenlen + lenbytes;
             } else if (prefix <= OFFSET_LONG_LIST) {  // [0xc0, 0xf7]
@@ -816,7 +816,7 @@ public class RLP {
                 pos += 1 + len;
             } else if (prefix <= 0xFF) {  // [0xf8, 0xff]
                 int lenlen = prefix - OFFSET_LONG_LIST; // length of length the encoded list
-                int lenlist = ByteUtil.byteArrayToInt(copyOfRange(data, pos + 1, pos + 1 + lenlen)); // length of encoded bytes
+                int lenlist = ByteUtil.bytesToInt(copyOfRange(data, pos + 1, pos + 1 + lenlen)); // length of encoded bytes
                 ret.add(pos + 1 + lenlen, lenlist, true);
                 pos += 1 + lenlen + lenlist; // start at position of first element in list
             } else {

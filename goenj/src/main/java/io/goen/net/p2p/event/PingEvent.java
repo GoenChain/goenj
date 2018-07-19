@@ -50,4 +50,52 @@ public class PingEvent extends Event {
 
         return RLP.encodeList(rlpToIp, rlpToPort, rlpFromIp, rlpFromPort, rlpRandomHexString, rlpExp);
 	}
+
+    public String getToIp() {
+        return toIp;
+    }
+
+    public void setToIp(String toIp) {
+        this.toIp = toIp;
+    }
+
+    public int getToPort() {
+        return toPort;
+    }
+
+    public void setToPort(int toPort) {
+        this.toPort = toPort;
+    }
+
+    public String getFromIp() {
+        return fromIp;
+    }
+
+    public void setFromIp(String fromIp) {
+        this.fromIp = fromIp;
+    }
+
+    public int getFromPort() {
+        return fromPort;
+    }
+
+    public void setFromPort(int fromPort) {
+        this.fromPort = fromPort;
+    }
+
+    public String getRandomHexString() {
+        return randomHexString;
+    }
+
+    public void setRandomHexString(String randomHexString) {
+        this.randomHexString = randomHexString;
+    }
+
+    public long getExpires() {
+        return expires;
+    }
+
+    public void setExpires(long expires) {
+        this.expires = expires;
+    }
 }

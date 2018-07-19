@@ -8,6 +8,11 @@ public class P2PMessage {
     private Event event;
     private InetSocketAddress inetSocketAddress;
 
+    public P2PMessage(InetSocketAddress socketAddress,Event event){
+        this.event = event;
+        this.inetSocketAddress = socketAddress;
+    }
+
     public Event getEvent() {
         return event;
     }

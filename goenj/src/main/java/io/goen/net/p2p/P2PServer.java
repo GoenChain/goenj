@@ -30,4 +30,8 @@ public class P2PServer {
 		engine.start();
 	}
 
+	public static void main(String[] args) {
+		new P2PServer();
+	}
+
 }

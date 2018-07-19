@@ -1,12 +1,11 @@
 package io.goen.core;
 
 import io.goen.net.crypto.ECKey;
+import org.spongycastle.util.encoders.Hex;
 
 import java.net.InetAddress;
 
 public class GoenConfig {
-
-    GoenConfig config = new GoenConfig();
 
     public static GoenConfig system = new GoenConfig();
 
@@ -15,8 +14,9 @@ public class GoenConfig {
     private InetAddress host;
     private int port;
 
-    private String[] peers;
+    private byte[] publicKey = Hex.decode("abcabd");
 
+    private String[] peers = new String[] { "gnode://abde@127.0.0.1:1234" };
 
     public final ECKey systemKey = Loader(ECKey.class);
 
@@ -59,5 +59,13 @@ public class GoenConfig {
 
     public ECKey getSystemKey() {
         return systemKey;
+    }
+
+    public byte[] getPublicKey() {
+        return publicKey;
+    }
+
+    public void setPublicKey(byte[] publicKey) {
+        this.publicKey = publicKey;
     }
 }

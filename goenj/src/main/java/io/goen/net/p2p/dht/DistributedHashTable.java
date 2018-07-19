@@ -24,7 +24,7 @@ public class DistributedHashTable {
 		}
 	}
 
-	public Node getNode() {
+	public Node getSelfNode() {
 		return this.selfNode;
 	}
 

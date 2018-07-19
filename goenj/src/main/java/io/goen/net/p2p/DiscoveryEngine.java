@@ -2,7 +2,7 @@ package io.goen.net.p2p;
 
 import com.google.common.net.InetAddresses;
 import io.goen.net.p2p.event.EventCodec;
-import io.goen.net.p2p.event.EventHandler;
+import io.goen.net.p2p.event.InEventHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -10,16 +10,24 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 
 import java.net.InetAddress;
+import java.util.List;
 
 public class DiscoveryEngine implements Engine {
 	private InetAddress ip;
 	private int port;
+	private List<Node> bootNodes;
 
 	private Channel channel;
 
 	public DiscoveryEngine(InetAddress ip, int port) {
 		this.ip = ip;
 		this.port = port;
+	}
+
+	public DiscoveryEngine(InetAddress ip, int port, List<Node> bootNodes) {
+		this.ip = ip;
+		this.port = port;
+		this.bootNodes =  bootNodes;
 	}
 
 	@Override
@@ -31,7 +39,7 @@ public class DiscoveryEngine implements Engine {
 					@Override
 					public void initChannel(NioDatagramChannel ch) throws Exception {
 						ch.pipeline().addLast(new EventCodec());
-						EventHandler messageHandler = new EventHandler(ch);
+						InEventHandler messageHandler = new InEventHandler(ch);
 						ch.pipeline().addLast(messageHandler);
 					}
 				});
