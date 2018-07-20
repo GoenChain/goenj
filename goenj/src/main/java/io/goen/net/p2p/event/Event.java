@@ -2,9 +2,9 @@ package io.goen.net.p2p.event;
 
 import io.goen.util.FastByteComparisons;
 import io.goen.util.HashUtil;
-import io.netty.buffer.ByteBuf;
 
 public abstract class Event {
+
 
     private byte[] mdc;
 
@@ -15,6 +15,10 @@ public abstract class Event {
     private byte[] data;
 
     private byte[] version;
+
+    public Event(){
+        this.version = new byte[]{1};
+    }
 
     public byte[] getMdc() {
         return mdc;

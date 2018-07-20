@@ -14,6 +14,7 @@ public class PingEvent extends Event {
 	long expires;
 
 	public PingEvent() {
+	    super();
 		this.setType(new byte[] { 1 });
 	}
 

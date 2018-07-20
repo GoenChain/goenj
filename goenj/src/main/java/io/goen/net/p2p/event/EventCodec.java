@@ -2,6 +2,7 @@ package io.goen.net.p2p.event;
 
 import java.util.List;
 
+import com.google.common.base.Verify;
 import io.goen.core.GoenConfig;
 import io.goen.net.crypto.ECDSASignature;
 import io.goen.net.p2p.P2PMessage;
@@ -69,8 +70,6 @@ public class EventCodec extends MessageToMessageCodec<DatagramPacket, P2PMessage
 		type[0] = encodedData[33];
 
 
-
-
 		byte[] signature = new byte[65];
 		System.arraycopy(encodedData, 34, signature, 0, 65);
 
@@ -84,10 +83,9 @@ public class EventCodec extends MessageToMessageCodec<DatagramPacket, P2PMessage
 
 		int check = FastByteComparisons.compareTo(mdc, 0, mdc.length, mdcCheck, 0, mdcCheck.length);
 
-		if (check != 0)
-			throw new RuntimeException("MDC check failed");
-		if (version[0] != 1)
-			throw new RuntimeException("version can't handle");
+        Verify.verify(check != 0,"MDC check failed");
+        Verify.verify(version[0] != 1,"version can't handle");
+
 
 		Event event;
 		switch (type[0]) {
