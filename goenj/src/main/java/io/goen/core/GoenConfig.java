@@ -16,7 +16,7 @@ public class GoenConfig {
 
     private byte[] publicKey = Hex.decode("029c22429ce7570b0a8a6f3861430c879298f3255223406f3651bf465f9cc33bab");
 
-    private String[] peers = new String[] { "gnode://abde@127.0.0.1:1234" };
+    private String[] peers = new String[] { "gnode://029c22429ce7570b0a8a6f3861430c879298f3255223406f3651bf465f9cc33bab@127.0.0.1:1234" };
 
     public final ECKey systemKey = Loader(ECKey.class);
 
