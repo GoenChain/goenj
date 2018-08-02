@@ -18,25 +18,23 @@ public class PingEvent extends Event {
 		this.setType(new byte[] { 1 });
 	}
 
-	@Override
-	public void parse(byte[] encodedData) {
-		this.pareseBase(encodedData);
-		byte[] data = this.getData();
-		RLPList list = (RLPList) RLP.decode2OneItem(data, 0);
-		this.toIp = ByteUtil.bytesToIp(list.get(0).getRLPData());
-		this.toPort = ByteUtil.bytesToInt(list.get(1).getRLPData());
+    @Override
+    public void parseData(byte[] encodedData) {
+        RLPList list = (RLPList) RLP.decode2OneItem(encodedData, 0);
+        this.toIp = ByteUtil.bytesToIp(list.get(0).getRLPData());
+        this.toPort = ByteUtil.bytesToInt(list.get(1).getRLPData());
 
-		this.fromIp = ByteUtil.bytesToIp(list.get(2).getRLPData());
-		this.fromPort = ByteUtil.bytesToInt(list.get(3).getRLPData());
+        this.fromIp = ByteUtil.bytesToIp(list.get(2).getRLPData());
+        this.fromPort = ByteUtil.bytesToInt(list.get(3).getRLPData());
 
-		this.randomHexString = Hex.toHexString(list.get(4).getRLPData());
+        this.randomHexString = Hex.toHexString(list.get(4).getRLPData());
 
-		this.expires = ByteUtil.bytesToLong(list.get(5).getRLPData());
+        this.expires = ByteUtil.bytesToLong(list.get(5).getRLPData());
+    }
 
-	}
 
 	@Override
-	public byte[] getBytes() {
+	public byte[] getDataBytes() {
 
 		byte[] tmpExp = ByteUtil.longToBytes(expires);
 		byte[] rlpExp = RLP.encodeElement(tmpExp);

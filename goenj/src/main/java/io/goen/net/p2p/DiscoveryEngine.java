@@ -2,7 +2,8 @@ package io.goen.net.p2p;
 
 import com.google.common.net.InetAddresses;
 import io.goen.net.p2p.event.EventCodec;
-import io.goen.net.p2p.event.InEventHandler;
+import io.goen.net.p2p.event.InP2PEventHandler;
+import io.goen.net.p2p.event.OutP2PEventHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -30,6 +31,11 @@ public class DiscoveryEngine implements Engine {
 		this.bootNodes =  bootNodes;
 	}
 
+    /**
+     *  in --> EventCodec --> InP2PEventHandler
+     *
+     *  out <-- EventCodec <-- OutP2PEventHandler
+     */
 	@Override
 	public void start() {
 		NioEventLoopGroup group = new NioEventLoopGroup(1);
@@ -39,8 +45,10 @@ public class DiscoveryEngine implements Engine {
 					@Override
 					public void initChannel(NioDatagramChannel ch) throws Exception {
 						ch.pipeline().addLast(new EventCodec());
-						InEventHandler messageHandler = new InEventHandler(ch);
-						ch.pipeline().addLast(messageHandler);
+						InP2PEventHandler inEventHandler = new InP2PEventHandler(ch);
+						ch.pipeline().addLast(inEventHandler);
+						OutP2PEventHandler outEventHandler = new  OutP2PEventHandler(ch);
+						ch.pipeline().addLast(outEventHandler);
 					}
 				});
 

@@ -469,8 +469,9 @@ public class ByteUtil {
 	}
 
 	public static byte[] and(byte[] b1, byte[] b2) {
-		if (b1.length != b2.length)
+		if (b1.length != b2.length) {
 			throw new RuntimeException("Array sizes differ");
+		}
 		byte[] ret = new byte[b1.length];
 		for (int i = 0; i < ret.length; i++) {
 			ret[i] = (byte) (b1[i] & b2[i]);
@@ -479,8 +480,9 @@ public class ByteUtil {
 	}
 
 	public static byte[] or(byte[] b1, byte[] b2) {
-		if (b1.length != b2.length)
+		if (b1.length != b2.length) {
 			throw new RuntimeException("Array sizes differ");
+		}
 		byte[] ret = new byte[b1.length];
 		for (int i = 0; i < ret.length; i++) {
 			ret[i] = (byte) (b1[i] | b2[i]);
@@ -489,8 +491,9 @@ public class ByteUtil {
 	}
 
 	public static byte[] xor(byte[] b1, byte[] b2) {
-		if (b1.length != b2.length)
+		if (b1.length != b2.length) {
 			throw new RuntimeException("Array sizes differ");
+		}
 		byte[] ret = new byte[b1.length];
 		for (int i = 0; i < ret.length; i++) {
 			ret[i] = (byte) (b1[i] ^ b2[i]);
@@ -653,12 +656,15 @@ public class ByteUtil {
 	 * @return decoded bytes array
 	 */
 	public static byte[] hexStringToBytes(String data) {
-		if (data == null)
+		if (data == null) {
 			return EMPTY_BYTE_ARRAY;
-		if (data.startsWith("0x"))
+		}
+		if (data.startsWith("0x")) {
 			data = data.substring(2);
-		if (data.length() % 2 == 1)
+		}
+		if (data.length() % 2 == 1) {
 			data = "0" + data;
+		}
 		return Hex.decode(data);
 	}
 
@@ -696,7 +702,7 @@ public class ByteUtil {
 
 	public static byte[] ipTobytes(String ip) {
 		byte [] ipBytes  = new byte[4];
-		String[] splitPart = ip.split(".");
+		String[] splitPart = ip.split("\\.");
 		for(int i =0 ; i < 4;i++){
 			ipBytes[i] = (byte) Integer.valueOf(splitPart[i]).intValue();
 		}
@@ -728,8 +734,9 @@ public class ByteUtil {
 	 */
 	public static byte[] parseBytes(byte[] input, int offset, int len) {
 
-		if (offset >= input.length || len == 0)
+		if (offset >= input.length || len == 0) {
 			return EMPTY_BYTE_ARRAY;
+		}
 
 		byte[] bytes = new byte[len];
 		System.arraycopy(input, offset, bytes, 0, Math.min(input.length - offset, len));

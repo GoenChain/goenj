@@ -25,23 +25,7 @@ public class EventCodec extends MessageToMessageCodec<DatagramPacket, P2PMessage
 	protected void encode(ChannelHandlerContext channelHandlerContext, P2PMessage message, List<Object> list)
 			throws Exception {
 		Event event = message.getEvent();
-		byte[] checkData = new byte[1 + event.getData().length];
-		checkData[0] = event.getType()[0];
-		checkData[1] = event.getVersion()[0];
-		System.arraycopy(event.getData(), 0, checkData, 2, event.getData().length);
-		byte[] forSig = HashUtil.sha256(checkData);
-
-		ECDSASignature signature = GoenConfig.system.getSystemKey().sign(forSig);
-
-		signature.v -= 27;
-
-		byte[] sigBytes = ByteUtil.merge(BigIntegers.asUnsignedByteArray(32, signature.r), BigIntegers
-				.asUnsignedByteArray(32, signature.s), new byte[] { signature.v });
-
-		byte[] forSha = ByteUtil.merge(event.getVersion(), event.getType(), sigBytes, event.getData());
-		byte[] mdc = HashUtil.sha256(forSha);
-
-		byte[] encodedData = ByteUtil.merge(mdc, forSha);
+		byte[] encodedData = event.getBytes();
 		DatagramPacket packet = new DatagramPacket(Unpooled.copiedBuffer(encodedData), message.getInetSocketAddress());
 		list.add(packet);
 	}
@@ -58,6 +42,7 @@ public class EventCodec extends MessageToMessageCodec<DatagramPacket, P2PMessage
 			List<Object> list) throws Exception {
 		ByteBuf buf = packet.content();
 		byte[] encodedData = new byte[buf.readableBytes()];
+
 		buf.readBytes(encodedData);
 
 		byte[] mdc = new byte[32];

@@ -14,11 +14,11 @@ public class GoenConfig {
     private InetAddress host;
     private int port;
 
-    private byte[] publicKey = Hex.decode("029c22429ce7570b0a8a6f3861430c879298f3255223406f3651bf465f9cc33bab");
+    public final ECKey systemKey = Loader(ECKey.class);
+
+    private final byte[] publicKey = systemKey.getPubKey();
 
     private String[] peers = new String[] { "gnode://029c22429ce7570b0a8a6f3861430c879298f3255223406f3651bf465f9cc33bab@127.0.0.1:1234" };
-
-    public final ECKey systemKey = Loader(ECKey.class);
 
 
     public boolean isP2PStart() {
@@ -30,7 +30,8 @@ public class GoenConfig {
     }
 
     private ECKey Loader(Class<ECKey> clazz){
-        return null;
+        ECKey systemKey = ECKey.fromPrivate(Hex.decode("5f844b9b9a147e2537fb091e3791bc37a75fd06c8ac76a2bdef13322b8e3b67a"));
+        return systemKey;
     }
 
     public InetAddress getHost() {
@@ -65,7 +66,4 @@ public class GoenConfig {
         return publicKey;
     }
 
-    public void setPublicKey(byte[] publicKey) {
-        this.publicKey = publicKey;
-    }
 }

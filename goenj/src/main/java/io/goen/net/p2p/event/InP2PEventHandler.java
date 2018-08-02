@@ -9,15 +9,18 @@ import io.goen.util.HashUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 
-public class InEventHandler extends SimpleChannelInboundHandler<P2PMessage> {
+public class InP2PEventHandler extends SimpleChannelInboundHandler<P2PMessage> {
+    private final static Logger logger = LoggerFactory.getLogger("net");
 	private Channel channel;
 
 	private DistributedHashTable dht = new DistributedHashTable(new Node(HashUtil.sha256(GoenConfig.system.getPublicKey()),GoenConfig.system.getHost(),GoenConfig.system.getPort()));
 
-	public InEventHandler(Channel channel) {
+	public InP2PEventHandler(Channel channel) {
 		this.channel = channel;
 	}
 

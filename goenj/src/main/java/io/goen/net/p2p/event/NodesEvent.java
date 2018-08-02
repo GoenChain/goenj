@@ -8,15 +8,17 @@ public class NodesEvent extends Event{
     List<Node> nodes;
 
     public NodesEvent(){
+        super();
         this.setType(new byte[]{4});
     }
+
     @Override
-    public void parse(byte[] data) {
+    public void parseData(byte[] encodedData) {
 
     }
 
     @Override
-    public byte[] getBytes() {
+    public byte[] getDataBytes() {
         return new byte[0];
     }
 }

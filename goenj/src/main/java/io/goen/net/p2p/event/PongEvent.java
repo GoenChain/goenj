@@ -12,26 +12,26 @@ public class PongEvent extends Event {
 	long expires;
 
 	public PongEvent() {
+		super();
 		this.setType(new byte[] { 2 });
 	}
 
 	public PongEvent(String pingHexString) {
+		super();
 		this.setType(new byte[] { 2 });
 		this.pingHexString = pingHexString;
 		this.expires = System.currentTimeMillis() / 1000L + 90 * 60;
 	}
 
 	@Override
-	public void parse(byte[] encodedData) {
-		this.pareseBase(encodedData);
-		byte[] data = this.getData();
-		RLPList list = (RLPList) RLP.decode2OneItem(data, 0);
+	public void parseData(byte[] encodedData) {
+		RLPList list = (RLPList) RLP.decode2OneItem(encodedData, 0);
 		this.pingHexString = Hex.toHexString(list.get(1).getRLPData());
 		this.expires = ByteUtil.bytesToLong(list.get(2).getRLPData());
 	}
 
 	@Override
-	public byte[] getBytes() {
+	public byte[] getDataBytes() {
 		byte[] tmpExp = ByteUtil.longToBytes(expires);
 		byte[] rlpExp = RLP.encodeElement(tmpExp);
 

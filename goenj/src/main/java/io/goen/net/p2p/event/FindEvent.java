@@ -6,17 +6,17 @@ public class FindEvent extends Event{
     long expires;
 
     public FindEvent(){
+        super();
         this.setType(new byte[]{3});
     }
-    @Override
-    public void parse(byte[] data) {
-        FindEvent findEvent = new FindEvent();
 
+    @Override
+    public void parseData(byte[] encodedData) {
 
     }
 
     @Override
-    public byte[] getBytes() {
+    public byte[] getDataBytes() {
         return new byte[0];
     }
 }
