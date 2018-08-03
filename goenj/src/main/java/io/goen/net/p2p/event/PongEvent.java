@@ -26,8 +26,8 @@ public class PongEvent extends Event {
 	@Override
 	public void parseData(byte[] encodedData) {
 		RLPList list = (RLPList) RLP.decode2OneItem(encodedData, 0);
-		this.pingHexString = Hex.toHexString(list.get(1).getRLPData());
-		this.expires = ByteUtil.bytesToLong(list.get(2).getRLPData());
+		this.pingHexString = Hex.toHexString(list.get(0).getRLPData());
+		this.expires = ByteUtil.bytesToLong(list.get(1).getRLPData());
 	}
 
 	@Override
@@ -38,5 +38,21 @@ public class PongEvent extends Event {
 		byte[] rlpRandomHexString = RLP.encodeElement(Hex.decode(this.pingHexString));
 
 		return RLP.encodeList(rlpRandomHexString, rlpExp);
+	}
+
+	public String getPingHexString() {
+		return pingHexString;
+	}
+
+	public void setPingHexString(String pingHexString) {
+		this.pingHexString = pingHexString;
+	}
+
+	public long getExpires() {
+		return expires;
+	}
+
+	public void setExpires(long expires) {
+		this.expires = expires;
 	}
 }

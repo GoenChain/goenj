@@ -68,8 +68,8 @@ public class EventCodec extends MessageToMessageCodec<DatagramPacket, P2PMessage
 
 		int check = FastByteComparisons.compareTo(mdc, 0, mdc.length, mdcCheck, 0, mdcCheck.length);
 
-        Verify.verify(check != 0,"MDC check failed");
-        Verify.verify(version[0] != 1,"version can't handle");
+        Verify.verify(check == 0,"MDC check failed");
+        Verify.verify(version[0] == 1,"version can't handle");
 
 
 		Event event;
@@ -95,7 +95,7 @@ public class EventCodec extends MessageToMessageCodec<DatagramPacket, P2PMessage
 		event.setVersion(version);
 		event.setType(type);
 		event.setData(data);
-		event.parse(data);
+		event.parseData(data);
 
 		P2PMessage message = new P2PMessage(packet.sender(),event);
 		list.add(message);
