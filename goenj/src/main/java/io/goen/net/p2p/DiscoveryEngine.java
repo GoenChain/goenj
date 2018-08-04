@@ -63,9 +63,4 @@ public class DiscoveryEngine implements Engine {
 	public Channel getChannel() {
 		return channel;
 	}
-
-	public static void main(String[] args) {
-		DiscoveryEngine discoveryEngine = new DiscoveryEngine(InetAddresses.forString("127.0.0.1"),9321);
-		discoveryEngine.start();
-	}
 }
