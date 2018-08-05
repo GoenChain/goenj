@@ -19,4 +19,20 @@ public class FindEvent extends Event{
     public byte[] getDataBytes() {
         return new byte[0];
     }
+
+    public byte[] getNearDistance() {
+        return nearDistance;
+    }
+
+    public void setNearDistance(byte[] nearDistance) {
+        this.nearDistance = nearDistance;
+    }
+
+    public long getExpires() {
+        return expires;
+    }
+
+    public void setExpires(long expires) {
+        this.expires = expires;
+    }
 }
