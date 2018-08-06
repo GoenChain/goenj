@@ -1,69 +1,139 @@
 package io.goen.core;
 
-import io.goen.net.crypto.ECKey;
+import java.io.File;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongycastle.util.encoders.Hex;
 
-import java.net.InetAddress;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+import io.goen.net.crypto.ECKey;
 
 public class GoenConfig {
 
-    public static GoenConfig system = new GoenConfig();
+	private final static Logger logger = LoggerFactory.getLogger("config");
 
-    private boolean P2PStart;
+	private static final String DEFAULT_FILE = "goen.conf";
 
-    private InetAddress host;
-    private int port;
+	private static final String SYSTEM_PRIVATEKEY = "system.privatekey";
 
-    public final ECKey systemKey = Loader(ECKey.class);
+	private static final String P2P_DISCOVERY_BOUND_IP = "p2p.discovery.bound.ip";
+	private static final String P2P_DISCOVERY_PORT = "p2p.discovery.port";
+	private static final String P2P_START = "p2p.start";
+	private static final String P2P_BOOT_PEERS = "p2p.boot.peers";
 
-    private final byte[] publicKey = systemKey.getPubKey();
+	public GoenConfig() {
+		this(new File(Thread.currentThread().getContextClassLoader().getResource(DEFAULT_FILE).getFile()));
+	}
 
-    private String[] peers = new String[] { "gnode://029c22429ce7570b0a8a6f3861430c879298f3255223406f3651bf465f9cc33bab@127.0.0.1:1234" };
+	public GoenConfig(File configFile) {
+		this(ConfigFactory.parseFile(configFile));
+		logger.info("loading file: {}", configFile.getAbsoluteFile().getAbsolutePath());
+	}
 
+	public GoenConfig(Config config) {
+		logger.info("goen config loading start");
+		this.config = config;
+		printConfig();
+		logger.info("goen config loading end");
+	}
 
-    public boolean isP2PStart() {
-        return P2PStart;
-    }
+	private Config config;
 
-    public void setP2PStart(boolean p2PStart) {
-        P2PStart = p2PStart;
-    }
+	public static GoenConfig system = new GoenConfig();
 
-    private ECKey Loader(Class<ECKey> clazz){
-        ECKey systemKey = ECKey.fromPrivate(Hex.decode("5f844b9b9a147e2537fb091e3791bc37a75fd06c8ac76a2bdef13322b8e3b67a"));
-        return systemKey;
-    }
+	@PrintValue
+	public boolean p2pStart() {
+		return config.getBoolean(P2P_START);
+	}
 
-    public InetAddress getHost() {
-        return host;
-    }
+	@PrintValue
+	public InetAddress boundHost() {
+		InetAddress host = null;
+		try {
+			host = InetAddress.getByName(config.getString(P2P_DISCOVERY_BOUND_IP));
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		return host;
+	}
 
-    public void setHost(InetAddress host) {
-        this.host = host;
-    }
+	@PrintValue
+	public int p2pDiscoveryPort() {
+		return config.getInt(P2P_DISCOVERY_PORT);
+	}
 
-    public int getPort() {
-        return port;
-    }
+	@PrintValue
+	public List<String> p2pDiscoveryPeers() {
+		return config.getStringList(P2P_BOOT_PEERS);
+	}
 
-    public void setPort(int port) {
-        this.port = port;
-    }
+	@PrintValue
+	public ECKey systemKey() {
+		String privateKey = config.getString(SYSTEM_PRIVATEKEY);
+		return ECKey.fromPrivate(Hex.decode(privateKey));
+	}
 
-    public String[] getPeers() {
-        return peers;
-    }
+	@PrintValue(PrintType.HEX)
+	public byte[] publicKey() {
+		return systemKey().getPubKey();
+	}
 
-    public void setPeers(String[] peers) {
-        this.peers = peers;
-    }
+	public void overrideParams(Config overrideOptions) {
+		config = overrideOptions.withFallback(config);
+	}
 
-    public ECKey getSystemKey() {
-        return systemKey;
-    }
+	public static void main(String[] args) {
+		List<String> strings = GoenConfig.system.p2pDiscoveryPeers();
+		for (String peer : strings) {
+			System.out.println(peer);
+		}
+	}
 
-    public byte[] getPublicKey() {
-        return publicKey;
-    }
+	@Target(ElementType.METHOD)
+	@Retention(RetentionPolicy.RUNTIME)
+	private @interface PrintValue {
+		public PrintType value() default PrintType.STRING;
+	}
+
+	enum PrintType {
+		STRING, HEX
+	}
+
+	private void printConfig() {
+		logger.info("goen config:");
+		logger.info("=========================");
+		for (Method method : getClass().getMethods()) {
+			try {
+				if (method.isAnnotationPresent(PrintValue.class)) {
+					Object result = method.invoke(this);
+					switch (method.getAnnotation(PrintValue.class).value()) {
+					case HEX:
+						logger.info("{}:{}", method.getName(), Hex.toHexString((byte[]) result));
+						break;
+					case STRING:
+						logger.info("{}:{}", method.getName(), result);
+						break;
+					default:
+						logger.info("{}:{}", method.getName(), result);
+						break;
+					}
+
+				}
+			} catch (Exception e) {
+				throw new RuntimeException("Error the config parameter is error: " + method, e);
+			}
+		}
+		logger.info("=========================");
+	}
 
 }

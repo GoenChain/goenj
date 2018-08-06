@@ -18,7 +18,7 @@ public class InP2PEventHandler extends SimpleChannelInboundHandler<P2PMessage> {
     private final static Logger logger = LoggerFactory.getLogger("net");
 	private Channel channel;
 
-	private DistributedHashTable dht = new DistributedHashTable(new Node(HashUtil.sha256(GoenConfig.system.getPublicKey()),GoenConfig.system.getHost(),GoenConfig.system.getPort()));
+	private DistributedHashTable dht = new DistributedHashTable(new Node(HashUtil.sha256(GoenConfig.system.publicKey()),GoenConfig.system.boundHost(),GoenConfig.system.p2pDiscoveryPort()));
 
 	public InP2PEventHandler(Channel channel) {
 		this.channel = channel;

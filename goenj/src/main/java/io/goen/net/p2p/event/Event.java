@@ -123,7 +123,7 @@ public abstract class Event {
         System.arraycopy(this.getData(), 0, checkData, 2, this.getData().length);
         byte[] forSig = HashUtil.sha256(checkData);
 
-        ECDSASignature signature = GoenConfig.system.getSystemKey().sign(forSig);
+        ECDSASignature signature = GoenConfig.system.systemKey().sign(forSig);
 
         signature.v -= 27;
 

@@ -16,10 +16,10 @@ public class P2PServer {
 
 	public P2PServer() {
 
-		init(GoenConfig.system.getPeers());
+		init(GoenConfig.system.p2pDiscoveryPeers());
 	}
 
-	public void init(String[] peers) {
+	public void init(List<String> peers) {
 		logger.info("starting p2p Server");
 		final List<Node> bootNodes = new ArrayList<>();
 

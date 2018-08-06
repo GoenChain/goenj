@@ -12,7 +12,7 @@ public class TestDHT {
 
     @Test
     public void testDHT(){
-        byte[] selfId = HashUtil.sha256(GoenConfig.system.getPublicKey());
+        byte[] selfId = HashUtil.sha256(GoenConfig.system.publicKey());
         Node node = new  Node(selfId, InetAddresses.forString("127.0.0.1"),30222);
         DistributedHashTable distributedHashTable =  new DistributedHashTable(node);
     }
