@@ -31,6 +31,10 @@ public class GoenConfig {
 	private static final String P2P_START = "p2p.start";
 	private static final String P2P_BOOT_PEERS = "p2p.boot.peers";
 
+	private Config config;
+
+	public static GoenConfig system = new GoenConfig();
+
 	public GoenConfig() {
 		this(new File(Thread.currentThread().getContextClassLoader().getResource(DEFAULT_FILE).getFile()));
 	}
@@ -47,9 +51,10 @@ public class GoenConfig {
 		logger.info("goen config loading end");
 	}
 
-	private Config config;
 
-	public static GoenConfig system = new GoenConfig();
+	public void overrideParams(Config overrideOptions) {
+		config = overrideOptions.withFallback(config);
+	}
 
 	@PrintValue
 	public boolean p2pStart() {
@@ -88,16 +93,7 @@ public class GoenConfig {
 		return systemKey().getPubKey();
 	}
 
-	public void overrideParams(Config overrideOptions) {
-		config = overrideOptions.withFallback(config);
-	}
 
-	public static void main(String[] args) {
-		List<String> strings = GoenConfig.system.p2pDiscoveryPeers();
-		for (String peer : strings) {
-			System.out.println(peer);
-		}
-	}
 
 	@Target(ElementType.METHOD)
 	@Retention(RetentionPolicy.RUNTIME)
