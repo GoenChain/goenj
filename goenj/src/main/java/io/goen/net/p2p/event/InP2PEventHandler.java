@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 
 public class InP2PEventHandler extends SimpleChannelInboundHandler<P2PMessage> {
-    private final static Logger logger = LoggerFactory.getLogger("net");
+    private final static Logger logger = LoggerFactory.getLogger("net.p2p");
 	private Channel channel;
 
 	private DistributedHashTable dht = new DistributedHashTable(new Node(HashUtil.sha256(GoenConfig.system.publicKey()),GoenConfig.system.boundHost(),GoenConfig.system.p2pDiscoveryPort()));
@@ -26,9 +26,11 @@ public class InP2PEventHandler extends SimpleChannelInboundHandler<P2PMessage> {
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, P2PMessage msg) throws Exception {
+        logger.info("rec a msg:{}",msg.getEvent().getType());
 		Event event = msg.getEvent();
 		InetSocketAddress inetSocketAddress = msg.getInetSocketAddress();
 		Node node = new Node(event.getType(), inetSocketAddress.getAddress(), inetSocketAddress.getPort());
+        actionEvent(node,msg.getEvent());
 	}
 
 	private void actionEvent(Node node, Event event) {

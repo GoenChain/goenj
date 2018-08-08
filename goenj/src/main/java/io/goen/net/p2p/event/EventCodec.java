@@ -14,6 +14,8 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.handler.codec.MessageToMessageCodec;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongycastle.util.BigIntegers;
 
 /**
@@ -21,6 +23,7 @@ import org.spongycastle.util.BigIntegers;
  * ]
  */
 public class EventCodec extends MessageToMessageCodec<DatagramPacket, P2PMessage> {
+	private final static Logger logger = LoggerFactory.getLogger("net.p2p");
 	@Override
 	protected void encode(ChannelHandlerContext channelHandlerContext, P2PMessage message, List<Object> list)
 			throws Exception {
