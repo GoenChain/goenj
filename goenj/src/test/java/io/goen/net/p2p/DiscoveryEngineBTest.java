@@ -11,7 +11,7 @@ import io.goen.net.p2p.event.PingEvent;
 
 public class DiscoveryEngineBTest {
     @Test
-    public void testDiscoryEngine(){
+    public void testB(){
         DiscoveryEngine deB = new DiscoveryEngine(InetAddresses.forString("127.0.0.1"), 20356);
         deB.start();
     }

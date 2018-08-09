@@ -9,7 +9,7 @@ import io.goen.net.p2p.event.PingEvent;
 
 public class DiscoveryEngineTest {
 	@Test
-	public void testDiscoryEngine() {
+	public void testA() {
 		DiscoveryEngine deA = new DiscoveryEngine(InetAddresses.forString("127.0.0.1"), 20355);
 
 		Thread threadA = new Thread(() -> {
@@ -28,7 +28,7 @@ public class DiscoveryEngineTest {
 		pingEvent.setRandomHexString("abcdef");
 		pingEvent.setToIp("127.0.0.1");
 		pingEvent.setToPort(20356);
-		P2PMessage p2PMessage = new P2PMessage(InetSocketAddress.createUnresolved("127.0.0.1", 20356),
+		P2PMessage p2PMessage = new P2PMessage(new InetSocketAddress("127.0.0.1", 20356),
 				pingEvent);
 		deA.getSender().sendMessage(p2PMessage);
 

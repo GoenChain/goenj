@@ -1,6 +1,7 @@
 package io.goen.net.p2p.event;
 
 import io.goen.net.p2p.P2PMessage;
+import io.goen.net.p2p.Sender;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
@@ -13,11 +14,11 @@ public class OutP2PEventHandler extends ChannelOutboundHandlerAdapter{
 
     private final static Logger logger = LoggerFactory.getLogger("net");
 
-    private Channel channel;
+    private Sender sender;
 
 
-    public OutP2PEventHandler(final Channel channel){
-        this.channel = channel;
+    public OutP2PEventHandler(final Sender sender){
+        this.sender = sender;
     }
 
     @Override

@@ -3,6 +3,7 @@ package io.goen.net.p2p.event;
 import com.google.common.base.Verify;
 import io.goen.core.GoenConfig;
 import io.goen.net.crypto.ECDSASignature;
+import io.goen.net.crypto.ECKey;
 import io.goen.util.ByteUtil;
 import io.goen.util.FastByteComparisons;
 import io.goen.util.HashUtil;
@@ -70,6 +71,12 @@ public abstract class Event {
     //To byte[]
     public abstract byte[] getDataBytes();
 
+    public byte[] getNodeId(){
+        ECDSASignature ecdsaSignature = new ECDSASignature(BigIntegers.fromUnsignedByteArray(signature, 0, 32), BigIntegers.fromUnsignedByteArray(signature, 32, 32));
+        byte[] rawData = ByteUtil.merge(version, type, data);
+        byte[] pubKey = ECKey.recoverPubBytesFromSignature(signature[64], ecdsaSignature, HashUtil.sha256(rawData));
+        return HashUtil.sha256(pubKey);
+    }
 
     /**
      *
@@ -88,7 +95,7 @@ public abstract class Event {
         type[0] = encodedData[33];
 
 
-        byte[] signature = new byte[65];
+        this.signature = new byte[65];
         System.arraycopy(encodedData, 34, signature, 0, 65);
 
         this.data = new byte[encodedData.length - 99];
@@ -107,6 +114,29 @@ public abstract class Event {
 
         //sub evnet
         parseData(data);
+    }
+
+    public static Event genEvent(byte[] encodedData){
+        byte type = encodedData[33];
+        Event event;
+        switch (type) {
+            case 1:
+                event = new PingEvent();
+                break;
+            case 2:
+                event = new PongEvent();
+                break;
+            case 3:
+                event = new FindEvent();
+                break;
+            case 4:
+                event = new NodesEvent();
+                break;
+            default:
+                throw new RuntimeException("p2p message is error type: " + type);
+        }
+        event.parse(encodedData);
+        return event;
     }
 
 /**

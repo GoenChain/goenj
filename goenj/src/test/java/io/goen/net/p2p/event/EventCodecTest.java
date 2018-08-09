@@ -25,7 +25,7 @@ public class EventCodecTest {
         pingEvent.setToIp("192.168.1.2");
         pingEvent.setToPort(30245);
 
-        P2PMessage p2pMessage = new P2PMessage(InetSocketAddress.createUnresolved(pingEvent.getToIp(),pingEvent.getToPort()),pingEvent);
+        P2PMessage p2pMessage = new P2PMessage(new InetSocketAddress(pingEvent.getToIp(),pingEvent.getToPort()),pingEvent);
 
         EmbeddedChannel channel = new EmbeddedChannel(new EventCodec());
         //output p2pMessge
@@ -56,7 +56,7 @@ public class EventCodecTest {
 
         buf.writeBytes(Hex.decode(hexString));
         ByteBuf input = buf.duplicate();
-        DatagramPacket packet = new DatagramPacket(input,InetSocketAddress.createUnresolved("192.168.1.1",30245));
+        DatagramPacket packet = new DatagramPacket(input,new InetSocketAddress("192.168.1.1",30245));
         EmbeddedChannel channel = new EmbeddedChannel(new EventCodec());
         channel.writeInbound(packet);
         channel.finish();
@@ -77,7 +77,7 @@ public class EventCodecTest {
         PongEvent pongEvent = new PongEvent();
         pongEvent.setExpires(1533218340901L+200);
         pongEvent.setPingHexString("abcdef");
-        P2PMessage p2pMessageForPong = new P2PMessage(InetSocketAddress.createUnresolved("192.168.1.1",30245),pongEvent);
+        P2PMessage p2pMessageForPong = new P2PMessage(new InetSocketAddress("192.168.1.1",30245),pongEvent);
 
         assertTrue(channel.writeOutbound(p2pMessageForPong));
         assertTrue(channel.finish());
@@ -102,7 +102,7 @@ public class EventCodecTest {
 
         buf.writeBytes(Hex.decode(hexString));
         ByteBuf input = buf.duplicate();
-        DatagramPacket packet = new DatagramPacket(input,InetSocketAddress.createUnresolved("192.168.1.1",30245));
+        DatagramPacket packet = new DatagramPacket(input,new InetSocketAddress("192.168.1.1",30245));
         EmbeddedChannel channel = new EmbeddedChannel(new EventCodec());
         channel.writeInbound(packet);
         channel.finish();

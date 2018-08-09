@@ -13,8 +13,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static io.netty.channel.ChannelOption.SO_BROADCAST;
 
 public class DiscoveryEngine implements Engine {
 	private final static Logger logger = LoggerFactory.getLogger("net.p2p");
@@ -44,24 +47,28 @@ public class DiscoveryEngine implements Engine {
 	 */
 	@Override
 	public void start() {
+
 		logger.info("starting discovery engine. listening: :[{}:{}]", ip, port);
+		InetSocketAddress inetSocketAddress = new InetSocketAddress(ip,port);
 		NioEventLoopGroup group = new NioEventLoopGroup(1);
         Bootstrap b = new Bootstrap();
-		b.group(group).channel(NioDatagramChannel.class).handler(
+		b.group(group)
+		.channel(NioDatagramChannel.class).handler(
 				new ChannelInitializer<NioDatagramChannel>() {
 					@Override
 					public void initChannel(NioDatagramChannel ch) throws Exception {
+						sender = new Sender(ch);
 						ch.pipeline().addLast(new EventCodec());
-						InP2PEventHandler inEventHandler = new InP2PEventHandler(ch);
+						InP2PEventHandler inEventHandler = new InP2PEventHandler(sender);
 						ch.pipeline().addLast(inEventHandler);
-						OutP2PEventHandler outEventHandler = new OutP2PEventHandler(ch);
+						OutP2PEventHandler outEventHandler = new OutP2PEventHandler(sender);
 						ch.pipeline().addLast(outEventHandler);
 					}
 				});
 
 		try {
-			channel = b.bind(ip,port).sync().channel();
-			sender = new Sender(channel);
+			channel = b.bind(port).sync().channel();
+
 			channel.closeFuture().sync();
 		} catch (InterruptedException e) {
 			logger.info(" discovery engine listening: :[{}:{}] ,has error {}", ip, port, e);

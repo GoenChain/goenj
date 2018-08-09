@@ -10,6 +10,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import io.goen.util.HashUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongycastle.util.encoders.Hex;
@@ -91,6 +92,11 @@ public class GoenConfig {
 	@PrintValue(PrintType.HEX)
 	public byte[] publicKey() {
 		return systemKey().getPubKey();
+	}
+
+	@PrintValue(PrintType.HEX)
+	public byte[] localNodeId() {
+		return HashUtil.sha256(systemKey().getPubKey());
 	}
 
 

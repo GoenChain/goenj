@@ -1,5 +1,6 @@
 package io.goen.net.p2p;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.net.InetAddresses;
 import io.goen.net.p2p.common.P2PConstant;
 import io.goen.util.HashUtil;
@@ -66,5 +67,14 @@ public class Node {
 
 	public void setPort(int port) {
 		this.port = port;
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(Node.class)
+		.add("nodeId",Hex.toHexString(nodeId))
+		.add("ip",ip)
+		.add("port",port)
+		.toString();
 	}
 }
