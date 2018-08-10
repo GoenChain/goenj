@@ -21,6 +21,10 @@ import java.io.Serializable;
 
 import org.spongycastle.util.encoders.Hex;
 
+/**
+ * This is borrowed from ethereumJ
+ */
+
 @SuppressWarnings("serial")
 public class DecodeResult implements Serializable {
 
@@ -40,6 +44,7 @@ public class DecodeResult implements Serializable {
         return decoded;
     }
 
+    @Override
     public String toString() {
         return asString(this.decoded);
     }

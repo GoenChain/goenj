@@ -26,6 +26,12 @@ import io.goen.util.HashUtil;
 import org.spongycastle.util.encoders.Hex;
 
 
+
+/**
+ * This is borrowed from ethereumJ
+ */
+
+
 /**
  * Class to encapsulate an object and provide utilities for conversion
  */
