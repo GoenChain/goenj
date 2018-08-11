@@ -1,4 +1,4 @@
-package io.goen.net.p2p;
+package io.goen.net;
 
 
 public interface Engine {
