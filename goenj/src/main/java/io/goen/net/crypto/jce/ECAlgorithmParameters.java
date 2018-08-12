@@ -24,6 +24,9 @@ import java.security.spec.ECGenParameterSpec;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.InvalidParameterSpecException;
 
+/**
+ * This is borrowed from ethereumJ
+ */
 public final class ECAlgorithmParameters {
 
   public static final String ALGORITHM = "EC";

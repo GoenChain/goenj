@@ -22,6 +22,9 @@ import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.Signature;
 
+/**
+ * This is borrowed from ethereumJ
+ */
 public final class ECSignatureFactory {
 
   public static final String RAW_ALGORITHM = "NONEwithECDSA";

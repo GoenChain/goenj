@@ -20,6 +20,9 @@ package io.goen.net.crypto.jce;
 import java.security.*;
 import java.security.spec.ECGenParameterSpec;
 
+/**
+ * This is borrowed from ethereumJ
+ */
 public final class ECKeyPairGenerator {
 
   public static final String ALGORITHM = "EC";

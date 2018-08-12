@@ -22,6 +22,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Provider;
 
+/**
+ * This is borrowed from ethereumJ
+ */
 public final class ECKeyFactory {
 
   public static final String ALGORITHM = "EC";

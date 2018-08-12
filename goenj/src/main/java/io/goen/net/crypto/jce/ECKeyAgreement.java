@@ -23,6 +23,9 @@ import java.security.Provider;
 
 import javax.crypto.KeyAgreement;
 
+/**
+ * This is borrowed from ethereumJ
+ */
 public final class ECKeyAgreement {
 
   public static final String ALGORITHM = "ECDH";
