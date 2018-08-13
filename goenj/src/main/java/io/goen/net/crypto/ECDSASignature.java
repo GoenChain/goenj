@@ -14,6 +14,9 @@ import org.spongycastle.asn1.x9.X9ECParameters;
 import org.spongycastle.crypto.params.ECDomainParameters;
 import org.spongycastle.util.encoders.Base64;
 
+/**
+ * This is borrowed cassandra
+ */
 public class ECDSASignature {
     public static final ECDomainParameters CURVE;
     public static final BigInteger HALF_CURVE_ORDER;
