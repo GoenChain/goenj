@@ -1,5 +1,9 @@
 package io.goen.net.p2p.event;
 
+import io.goen.rlp.RLP;
+import io.goen.rlp.RLPList;
+import io.goen.util.ByteUtil;
+
 public class FindEvent extends Event{
 
     byte[] nearDistance;
@@ -12,12 +16,18 @@ public class FindEvent extends Event{
 
     @Override
     public void parseData(byte[] encodedData) {
-
+        RLPList list = (RLPList) RLP.decode2OneItem(encodedData, 0);
+        this.nearDistance = list.get(0).getRLPData();
+        this.expires = ByteUtil.bytesToLong(list.get(1).getRLPData());
     }
 
     @Override
     public byte[] getDataBytes() {
-        return new byte[0];
+        byte[] tmpExp = ByteUtil.longToBytes(expires);
+        byte[] rlpExp = RLP.encodeElement(tmpExp);
+        byte[] rlpFromNearDistance = RLP.encodeElement(nearDistance);
+
+        return RLP.encodeList(rlpFromNearDistance, rlpExp);
     }
 
     public byte[] getNearDistance() {

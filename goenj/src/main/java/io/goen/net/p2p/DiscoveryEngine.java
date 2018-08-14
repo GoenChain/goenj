@@ -1,5 +1,6 @@
 package io.goen.net.p2p;
 
+import io.goen.net.Engine;
 import io.goen.net.p2p.event.EventCodec;
 import io.goen.net.p2p.event.InP2PEventHandler;
 import io.goen.net.p2p.event.OutP2PEventHandler;

@@ -34,7 +34,11 @@ public class DistributedHashTable {
 	}
 
 	public synchronized List<Node> getClosest(int num) {
-		TreeSet<Node> sortedSet = Sets.newTreeSet(new IdComparator(this.selfNode.getNodeId()));
+		return this.getClosest(this.selfNode,num);
+	}
+
+	public synchronized List<Node> getClosest(Node node ,int num) {
+		TreeSet<Node> sortedSet = Sets.newTreeSet(new IdComparator(node.getNodeId()));
 		sortedSet.addAll(this.getAllNodes());
 
 		List<Node> closest = Lists.newArrayListWithCapacity(num);

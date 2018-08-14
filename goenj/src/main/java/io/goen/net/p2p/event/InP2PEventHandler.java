@@ -6,6 +6,7 @@ import io.goen.net.p2p.Node;
 import io.goen.net.p2p.P2PMessage;
 import io.goen.net.p2p.Sender;
 import io.goen.net.p2p.dht.DistributedHashTable;
+import io.goen.net.p2p.dht.KadConfig;
 import io.goen.util.HashUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.Map;
 
 public class InP2PEventHandler extends SimpleChannelInboundHandler<P2PMessage> {
@@ -69,15 +71,23 @@ public class InP2PEventHandler extends SimpleChannelInboundHandler<P2PMessage> {
 	private void handlePongEvent(Node node, PongEvent pongEvent) {
 		// update the Node status
 		dht.instertNode(node);
-		System.out.println(dht.getAllNodes());
 	}
 
 	private void handleFindEvent(Node node, FindEvent findEvent) {
-
+		List<Node> closest = dht.getClosest(node, KadConfig.STALE);
+		NodesEvent nodesEvent = new NodesEvent();
+		nodesEvent.setNodes(closest);
+		nodesEvent.setExpires(System.currentTimeMillis() + KadConfig.EXPIRE);
+		P2PMessage p2pMessage = new P2PMessage(new InetSocketAddress(node.getIp(), node.getPort()),
+				nodesEvent);
+		sendEvent(p2pMessage);
 	}
 
 	private void handleNodesEvent(Node node, NodesEvent nodesEvent) {
-
+		List<Node> nodes = nodesEvent.getNodes();
+		for (Node redNode : nodes) {
+			dht.instertNode(redNode);
+		}
 	}
 
 	private void sendEvent(P2PMessage message) {

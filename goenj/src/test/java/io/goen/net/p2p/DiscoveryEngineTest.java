@@ -2,6 +2,7 @@ package io.goen.net.p2p;
 
 import java.net.InetSocketAddress;
 
+import io.goen.net.p2p.dht.KadConfig;
 import org.junit.Test;
 
 import com.google.common.net.InetAddresses;
@@ -22,7 +23,7 @@ public class DiscoveryEngineTest {
 			e.printStackTrace();
 		}
 		PingEvent pingEvent = new PingEvent();
-		pingEvent.setExpires(1533218340901L + 100);
+		pingEvent.setExpires(1533218340901L + KadConfig.EXPIRE);
 		pingEvent.setFromIp("127.0.0.1");
 		pingEvent.setFromPort(20355);
 		pingEvent.setRandomHexString("abcdef");
