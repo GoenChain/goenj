@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
  */
-package io.goen.net.crypto;
+package io.goen.crypto;
 
 /**
  * Copyright 2011 Google Inc.
@@ -37,24 +37,20 @@ package io.goen.net.crypto;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.nio.charset.Charset;
 import java.security.*;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+import java.security.spec.ECGenParameterSpec;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.InvalidParameterSpecException;
 import java.util.Arrays;
 
 import javax.annotation.Nullable;
 import javax.crypto.KeyAgreement;
 
-import io.goen.net.crypto.jce.*;
-import io.goen.util.BIUtil;
 import io.goen.util.ByteUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spongycastle.asn1.ASN1InputStream;
-import org.spongycastle.asn1.ASN1Integer;
-import org.spongycastle.asn1.DLSequence;
 import org.spongycastle.asn1.sec.SECNamedCurves;
 import org.spongycastle.asn1.x9.X9ECParameters;
 import org.spongycastle.asn1.x9.X9IntegerConverter;
@@ -67,6 +63,7 @@ import org.spongycastle.crypto.signers.ECDSASigner;
 import org.spongycastle.crypto.signers.HMacDSAKCalculator;
 import org.spongycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
 import org.spongycastle.jcajce.provider.asymmetric.ec.BCECPublicKey;
+import org.spongycastle.jce.provider.BouncyCastleProvider;
 import org.spongycastle.jce.spec.ECParameterSpec;
 import org.spongycastle.jce.spec.ECPrivateKeySpec;
 import org.spongycastle.jce.spec.ECPublicKeySpec;
@@ -1099,4 +1096,253 @@ public class ECKey implements Serializable {
         }
 	}
 
+	/**
+     * This is borrowed from ethereumJ
+     */
+    public static final class ECAlgorithmParameters {
+
+      public static final String ALGORITHM = "EC";
+      public static final String CURVE_NAME = "secp256k1";
+
+      private ECAlgorithmParameters() { }
+
+      private static class Holder {
+        private static final AlgorithmParameters INSTANCE;
+
+        private static final ECGenParameterSpec SECP256K1_CURVE
+            = new ECGenParameterSpec(CURVE_NAME);
+
+        static {
+          try {
+            INSTANCE = AlgorithmParameters.getInstance(ALGORITHM);
+            INSTANCE.init(SECP256K1_CURVE);
+          } catch (NoSuchAlgorithmException ex) {
+            throw new AssertionError(
+                "Assumed the JRE supports EC algorithm params", ex);
+          } catch (InvalidParameterSpecException ex) {
+            throw new AssertionError(
+                "Assumed correct key spec statically", ex);
+          }
+        }
+      }
+
+      public static java.security.spec.ECParameterSpec getParameterSpec() {
+        try {
+          return Holder.INSTANCE.getParameterSpec(java.security.spec.ECParameterSpec.class);
+        } catch (InvalidParameterSpecException ex) {
+          throw new AssertionError(
+              "Assumed correct key spec statically", ex);
+        }
+      }
+
+      public static byte[] getASN1Encoding() {
+        try {
+          return Holder.INSTANCE.getEncoded();
+        } catch (IOException ex) {
+          throw new AssertionError(
+              "Assumed algo params has been initialized", ex);
+        }
+      }
+    }
+
+	/**
+     * This is borrowed from ethereumJ
+     */
+    public static final class ECKeyAgreement {
+
+      public static final String ALGORITHM = "ECDH";
+
+      private static final String algorithmAssertionMsg =
+          "Assumed the JRE supports EC key agreement";
+
+      private ECKeyAgreement() { }
+
+      public static KeyAgreement getInstance() {
+        try {
+          return KeyAgreement.getInstance(ALGORITHM);
+        } catch (NoSuchAlgorithmException ex) {
+          throw new AssertionError(algorithmAssertionMsg, ex);
+        }
+      }
+
+      public static KeyAgreement getInstance(final String provider) throws NoSuchProviderException {
+        try {
+          return KeyAgreement.getInstance(ALGORITHM, provider);
+        } catch (NoSuchAlgorithmException ex) {
+          throw new AssertionError(algorithmAssertionMsg, ex);
+        }
+      }
+
+      public static KeyAgreement getInstance(final Provider provider) {
+        try {
+          return KeyAgreement.getInstance(ALGORITHM, provider);
+        } catch (NoSuchAlgorithmException ex) {
+          throw new AssertionError(algorithmAssertionMsg, ex);
+        }
+      }
+    }
+
+	/**
+     * This is borrowed from ethereumJ
+     */
+    public static final class ECKeyFactory {
+
+      public static final String ALGORITHM = "EC";
+
+      private static final String algorithmAssertionMsg =
+          "Assumed the JRE supports EC key factories";
+
+      private ECKeyFactory() { }
+
+      private static class Holder {
+        private static final KeyFactory INSTANCE;
+
+        static {
+          try {
+            INSTANCE = KeyFactory.getInstance(ALGORITHM);
+          } catch (NoSuchAlgorithmException ex) {
+            throw new AssertionError(algorithmAssertionMsg, ex);
+          }
+        }
+      }
+
+      public static KeyFactory getInstance() {
+        return Holder.INSTANCE;
+      }
+
+      public static KeyFactory getInstance(final String provider) throws NoSuchProviderException {
+        try {
+          return KeyFactory.getInstance(ALGORITHM, provider);
+        } catch (NoSuchAlgorithmException ex) {
+          throw new AssertionError(algorithmAssertionMsg, ex);
+        }
+      }
+
+      public static KeyFactory getInstance(final Provider provider) {
+        try {
+          return KeyFactory.getInstance(ALGORITHM, provider);
+        } catch (NoSuchAlgorithmException ex) {
+          throw new AssertionError(algorithmAssertionMsg, ex);
+        }
+      }
+    }
+
+	/**
+     * This is borrowed from ethereumJ
+     */
+    public static final class ECKeyPairGenerator {
+
+      public static final String ALGORITHM = "EC";
+      public static final String CURVE_NAME = "secp256k1";
+
+      private static final String algorithmAssertionMsg =
+          "Assumed JRE supports EC key pair generation";
+
+      private static final String keySpecAssertionMsg =
+          "Assumed correct key spec statically";
+
+      private static final ECGenParameterSpec SECP256K1_CURVE
+          = new ECGenParameterSpec(CURVE_NAME);
+
+      private ECKeyPairGenerator() { }
+
+      private static class Holder {
+        private static final KeyPairGenerator INSTANCE;
+
+        static {
+          try {
+            INSTANCE = KeyPairGenerator.getInstance(ALGORITHM);
+            INSTANCE.initialize(SECP256K1_CURVE);
+          } catch (NoSuchAlgorithmException ex) {
+            throw new AssertionError(algorithmAssertionMsg, ex);
+          } catch (InvalidAlgorithmParameterException ex) {
+            throw new AssertionError(keySpecAssertionMsg, ex);
+          }
+        }
+      }
+
+      public static KeyPair generateKeyPair() {
+        return Holder.INSTANCE.generateKeyPair();
+      }
+
+      public static KeyPairGenerator getInstance(final String provider, final SecureRandom random) throws NoSuchProviderException {
+        try {
+          final KeyPairGenerator gen = KeyPairGenerator.getInstance(ALGORITHM, provider);
+          gen.initialize(SECP256K1_CURVE, random);
+          return gen;
+        } catch (NoSuchAlgorithmException ex) {
+          throw new AssertionError(algorithmAssertionMsg, ex);
+        } catch (InvalidAlgorithmParameterException ex) {
+          throw new AssertionError(keySpecAssertionMsg, ex);
+        }
+      }
+
+      public static KeyPairGenerator getInstance(final Provider provider, final SecureRandom random) {
+        try {
+          final KeyPairGenerator gen = KeyPairGenerator.getInstance(ALGORITHM, provider);
+          gen.initialize(SECP256K1_CURVE, random);
+          return gen;
+        } catch (NoSuchAlgorithmException ex) {
+          throw new AssertionError(algorithmAssertionMsg, ex);
+        } catch (InvalidAlgorithmParameterException ex) {
+          throw new AssertionError(keySpecAssertionMsg, ex);
+        }
+      }
+    }
+
+	/**
+     * This is borrowed from ethereumJ
+     */
+    public static final class ECSignatureFactory {
+
+      public static final String RAW_ALGORITHM = "NONEwithECDSA";
+
+      private static final String rawAlgorithmAssertionMsg =
+          "Assumed the JRE supports NONEwithECDSA signatures";
+
+      private ECSignatureFactory() { }
+
+      public static Signature getRawInstance() {
+        try {
+          return Signature.getInstance(RAW_ALGORITHM);
+        } catch (NoSuchAlgorithmException ex) {
+          throw new AssertionError(rawAlgorithmAssertionMsg, ex);
+        }
+      }
+
+      public static Signature getRawInstance(final String provider) throws NoSuchProviderException {
+        try {
+          return Signature.getInstance(RAW_ALGORITHM, provider);
+        } catch (NoSuchAlgorithmException ex) {
+          throw new AssertionError(rawAlgorithmAssertionMsg, ex);
+        }
+      }
+
+      public static Signature getRawInstance(final Provider provider) {
+        try {
+          return Signature.getInstance(RAW_ALGORITHM, provider);
+        } catch (NoSuchAlgorithmException ex) {
+          throw new AssertionError(rawAlgorithmAssertionMsg, ex);
+        }
+      }
+    }
+
+	public static final class SpongyCastleProvider {
+
+      private static class Holder {
+        private static final Provider INSTANCE;
+        static{
+            Provider p = Security.getProvider("SC");
+
+            INSTANCE = (p != null) ? p : new BouncyCastleProvider();
+
+            INSTANCE.put("MessageDigest.ETH-KECCAK-256", "com.medici.firestar.crypto.cryptohash.Keccak256");
+            INSTANCE.put("MessageDigest.ETH-KECCAK-512", "com.medici.firestar.crypto.cryptohash.Keccak512");
+        }
+      }
+
+      public static Provider getInstance() {
+        return Holder.INSTANCE;
+      }
+    }
 }

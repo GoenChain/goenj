@@ -15,46 +15,54 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
  */
-package io.goen.net.crypto.jce;
+package io.goen.crypto.jce;
 
+import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Provider;
-import java.security.Signature;
 
 /**
  * This is borrowed from ethereumJ
  */
-public final class ECSignatureFactory {
+public final class ECKeyFactory {
 
-  public static final String RAW_ALGORITHM = "NONEwithECDSA";
+  public static final String ALGORITHM = "EC";
 
-  private static final String rawAlgorithmAssertionMsg =
-      "Assumed the JRE supports NONEwithECDSA signatures";
+  private static final String algorithmAssertionMsg =
+      "Assumed the JRE supports EC key factories";
 
-  private ECSignatureFactory() { }
+  private ECKeyFactory() { }
 
-  public static Signature getRawInstance() {
-    try {
-      return Signature.getInstance(RAW_ALGORITHM);
-    } catch (NoSuchAlgorithmException ex) {
-      throw new AssertionError(rawAlgorithmAssertionMsg, ex);
+  private static class Holder {
+    private static final KeyFactory INSTANCE;
+
+    static {
+      try {
+        INSTANCE = KeyFactory.getInstance(ALGORITHM);
+      } catch (NoSuchAlgorithmException ex) {
+        throw new AssertionError(algorithmAssertionMsg, ex);
+      }
     }
   }
 
-  public static Signature getRawInstance(final String provider) throws NoSuchProviderException {
+  public static KeyFactory getInstance() {
+    return Holder.INSTANCE;
+  }
+
+  public static KeyFactory getInstance(final String provider) throws NoSuchProviderException {
     try {
-      return Signature.getInstance(RAW_ALGORITHM, provider);
+      return KeyFactory.getInstance(ALGORITHM, provider);
     } catch (NoSuchAlgorithmException ex) {
-      throw new AssertionError(rawAlgorithmAssertionMsg, ex);
+      throw new AssertionError(algorithmAssertionMsg, ex);
     }
   }
 
-  public static Signature getRawInstance(final Provider provider) {
+  public static KeyFactory getInstance(final Provider provider) {
     try {
-      return Signature.getInstance(RAW_ALGORITHM, provider);
+      return KeyFactory.getInstance(ALGORITHM, provider);
     } catch (NoSuchAlgorithmException ex) {
-      throw new AssertionError(rawAlgorithmAssertionMsg, ex);
+      throw new AssertionError(algorithmAssertionMsg, ex);
     }
   }
 }

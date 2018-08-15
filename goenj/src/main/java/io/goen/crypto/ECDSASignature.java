@@ -1,4 +1,4 @@
-package io.goen.net.crypto;
+package io.goen.crypto;
 
 
 import java.io.IOException;

@@ -2,8 +2,8 @@ package io.goen.net.p2p.event;
 
 import com.google.common.base.Verify;
 import io.goen.core.GoenConfig;
-import io.goen.net.crypto.ECDSASignature;
-import io.goen.net.crypto.ECKey;
+import io.goen.crypto.ECDSASignature;
+import io.goen.crypto.ECKey;
 import io.goen.util.ByteUtil;
 import io.goen.util.FastByteComparisons;
 import io.goen.util.HashUtil;

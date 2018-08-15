@@ -17,7 +17,7 @@ import org.spongycastle.util.encoders.Hex;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import io.goen.net.crypto.ECKey;
+import io.goen.crypto.ECKey;
 
 public class GoenConfig {
 
