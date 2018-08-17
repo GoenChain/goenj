@@ -1,13 +1,5 @@
-package io.goen.witness.common;/**
- * Created by yuanhangzhang1 on 2018/5/7.
- */
+package io.goen.witness.common;
 
-/**
- *
- *
- * @author yuanhangzhang1
- * @create 2018-05-07 14:43
- **/
 public class GlobalObject {
     /**
      * ID

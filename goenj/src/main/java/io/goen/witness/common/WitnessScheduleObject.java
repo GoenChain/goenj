@@ -1,12 +1,5 @@
-package io.goen.witness.common;/**
- * Created by yuanhangzhang1 on 2017/5/7.
- */
+package io.goen.witness.common;
 
-/**
- *
- * @author yuanhangzhang1
- * @create 2017-05-07 14:44
- **/
 public class WitnessScheduleObject {
     /**
      * ID

@@ -1,15 +1,8 @@
-package io.goen.witness.common;/**
- * Created by yuanhangzhang1 on 2018/5/23.
- */
+package io.goen.witness.common;
 
 import java.math.BigInteger;
 
-/**
- *
- *
- * @author yuanhangzhang1
- * @create 2018-05-23 14:08
- **/
+
 public class RewardFundObject {
     /**
      * ID

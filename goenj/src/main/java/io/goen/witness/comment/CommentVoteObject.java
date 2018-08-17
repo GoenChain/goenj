@@ -1,7 +1,4 @@
-package io.goen.witness.comment;/**
- * Created by yuanhangzhang1 on 2018/5/24.
- */
-
+package io.goen.witness.comment;
 import java.math.BigInteger;
 
 public class CommentVoteObject {

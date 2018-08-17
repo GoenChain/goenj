@@ -1,16 +1,7 @@
-package io.goen.witness.comment;/**
- * Created by yuanhangzhang1 on 2018/5/24.
- */
-
+package io.goen.witness.comment;
 import java.math.BigInteger;
 
-/**
- * Comment
- *
- * Content
- * @author yuanhangzhang1
- * @create 2018-05-24 0:21
- **/
+
 public class CommentObject {
     /**
      * ID

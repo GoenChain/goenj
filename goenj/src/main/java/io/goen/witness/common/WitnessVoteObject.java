@@ -1,12 +1,6 @@
 package io.goen.witness.common;
 
-/**
- */
 
-/**
- *
- * @author yuanhangzhang1
- **/
 public class WitnessVoteObject {
     /**
      * ID
