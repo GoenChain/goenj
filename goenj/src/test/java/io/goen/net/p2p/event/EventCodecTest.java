@@ -18,14 +18,14 @@ public class EventCodecTest {
 
         //PingEvent
         PingEvent pingEvent = new PingEvent();
-        pingEvent.setExpires(1533218340901L+100);
+        pingEvent.setExpires(1533218340901L + 100);
         pingEvent.setFromIp("192.168.1.1");
         pingEvent.setFromPort(30245);
         pingEvent.setRandomHexString("abcdef");
         pingEvent.setToIp("192.168.1.2");
         pingEvent.setToPort(30245);
 
-        P2PMessage p2pMessage = new P2PMessage(new InetSocketAddress(pingEvent.getToIp(),pingEvent.getToPort()),pingEvent);
+        P2PMessage p2pMessage = new P2PMessage(new InetSocketAddress(pingEvent.getToIp(), pingEvent.getToPort()), pingEvent);
 
         EmbeddedChannel channel = new EmbeddedChannel(new EventCodec());
         //output p2pMessge
@@ -41,11 +41,11 @@ public class EventCodecTest {
         PingEvent decodePingEvent = new PingEvent();
         decodePingEvent.parse(testEncodeData);
 
-        assertEquals(decodePingEvent.getToIp(),pingEvent.getToIp());
-        assertEquals(decodePingEvent.getToPort(),pingEvent.getToPort());
-        assertEquals(decodePingEvent.getFromIp(),pingEvent.getFromIp());
-        assertEquals(decodePingEvent.getFromPort(),pingEvent.getFromPort());
-        assertEquals(decodePingEvent.getRandomHexString(),pingEvent.getRandomHexString());
+        assertEquals(decodePingEvent.getToIp(), pingEvent.getToIp());
+        assertEquals(decodePingEvent.getToPort(), pingEvent.getToPort());
+        assertEquals(decodePingEvent.getFromIp(), pingEvent.getFromIp());
+        assertEquals(decodePingEvent.getFromPort(), pingEvent.getFromPort());
+        assertEquals(decodePingEvent.getRandomHexString(), pingEvent.getRandomHexString());
 
     }
 
@@ -56,28 +56,28 @@ public class EventCodecTest {
 
         buf.writeBytes(Hex.decode(hexString));
         ByteBuf input = buf.duplicate();
-        DatagramPacket packet = new DatagramPacket(input,new InetSocketAddress("192.168.1.1",30245));
+        DatagramPacket packet = new DatagramPacket(input, new InetSocketAddress("192.168.1.1", 30245));
         EmbeddedChannel channel = new EmbeddedChannel(new EventCodec());
         channel.writeInbound(packet);
         channel.finish();
         P2PMessage p2PMessage = channel.readInbound();
         PingEvent pingEvent = (PingEvent) p2PMessage.getEvent();
-        assertEquals("192.168.1.2",pingEvent.getToIp());
-        assertEquals(30245,pingEvent.getToPort());
-        assertEquals("192.168.1.1",pingEvent.getFromIp());
-        assertEquals(30245,pingEvent.getFromPort());
-        assertEquals("abcdef",pingEvent.getRandomHexString());
+        assertEquals("192.168.1.2", pingEvent.getToIp());
+        assertEquals(30245, pingEvent.getToPort());
+        assertEquals("192.168.1.1", pingEvent.getFromIp());
+        assertEquals(30245, pingEvent.getFromPort());
+        assertEquals("abcdef", pingEvent.getRandomHexString());
     }
 
     @Test
-    public void encodePong(){
+    public void encodePong() {
         EmbeddedChannel channel = new EmbeddedChannel(new EventCodec());
         //PoneEvent
 
         PongEvent pongEvent = new PongEvent();
-        pongEvent.setExpires(1533218340901L+200);
+        pongEvent.setExpires(1533218340901L + 200);
         pongEvent.setPingHexString("abcdef");
-        P2PMessage p2pMessageForPong = new P2PMessage(new InetSocketAddress("192.168.1.1",30245),pongEvent);
+        P2PMessage p2pMessageForPong = new P2PMessage(new InetSocketAddress("192.168.1.1", 30245), pongEvent);
 
         assertTrue(channel.writeOutbound(p2pMessageForPong));
         assertTrue(channel.finish());
@@ -91,10 +91,11 @@ public class EventCodecTest {
         PongEvent decodePongEvent = new PongEvent();
         decodePongEvent.parse(testEncodeDataForPong);
 
-        assertEquals(decodePongEvent.getPingHexString(),pongEvent.getPingHexString());
-        assertEquals(decodePongEvent.getExpires(),pongEvent.getExpires());
+        assertEquals(decodePongEvent.getPingHexString(), pongEvent.getPingHexString());
+        assertEquals(decodePongEvent.getExpires(), pongEvent.getExpires());
         //92c7524844ff4ed43eae004f4137c15ca70ed301c762bac7d6ade03a1207b9730102c842ca9db7b2101ce13d88e1e13c00ec45e761b315f04c2dd5e6780d1e1c9e62287b13c547071c8010d88f097d03b4866d419fcac87e877e93fcb512ba964dad00cd83abcdef8800000164faef40ed
     }
+
     @Test
     public void decodePong() throws Exception {
         ByteBuf buf = Unpooled.buffer();
@@ -102,13 +103,21 @@ public class EventCodecTest {
 
         buf.writeBytes(Hex.decode(hexString));
         ByteBuf input = buf.duplicate();
-        DatagramPacket packet = new DatagramPacket(input,new InetSocketAddress("192.168.1.1",30245));
+        DatagramPacket packet = new DatagramPacket(input, new InetSocketAddress("192.168.1.1", 30245));
         EmbeddedChannel channel = new EmbeddedChannel(new EventCodec());
         channel.writeInbound(packet);
         channel.finish();
         P2PMessage p2PMessage = channel.readInbound();
         PongEvent pongEvent = (PongEvent) p2PMessage.getEvent();
-        assertEquals("abcdef",pongEvent.getPingHexString());
-        assertEquals(1533218340901L+200,pongEvent.getExpires());
+        assertEquals("abcdef", pongEvent.getPingHexString());
+        assertEquals(1533218340901L + 200, pongEvent.getExpires());
+    }
+
+    @Test
+    public void encodeFind() {
+    }
+
+    @Test
+    public void decodeFind() throws Exception {
     }
 }
