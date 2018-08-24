@@ -115,6 +115,19 @@ public class EventCodecTest {
 
     @Test
     public void encodeFind() {
+        ByteBuf buf = Unpooled.buffer();
+        String hexString = "92c7524844ff4ed43eae004f4137c15ca70ed301c762bac7d6ade03a1207b9730102c842ca9db7b2101ce13d88e1e13c00ec45e761b315f04c2dd5e6780d1e1c9e62287b13c547071c8010d88f097d03b4866d419fcac87e877e93fcb512ba964dad00cd83abcdef8800000164faef40ed";
+
+        buf.writeBytes(Hex.decode(hexString));
+        ByteBuf input = buf.duplicate();
+        DatagramPacket packet = new DatagramPacket(input, new InetSocketAddress("192.168.1.1", 30245));
+        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec());
+        channel.writeInbound(packet);
+        channel.finish();
+        P2PMessage p2PMessage = channel.readInbound();
+        PongEvent pongEvent = (PongEvent) p2PMessage.getEvent();
+        assertEquals("abcdef", pongEvent.getPingHexString());
+        assertEquals(1533218340901L + 200, pongEvent.getExpires());
     }
 
     @Test
