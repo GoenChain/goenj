@@ -15,6 +15,7 @@ public class TestDHT {
         byte[] selfId = HashUtil.sha256(GoenConfig.system.publicKey());
         Node node = new  Node(selfId, InetAddresses.forString("127.0.0.1"),30222);
         DistributedHashTable distributedHashTable =  new DistributedHashTable(node);
+        distributedHashTable.instertNode(node);
     }
 
 }
