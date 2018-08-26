@@ -125,9 +125,9 @@ public class EventCodecTest {
         channel.writeInbound(packet);
         channel.finish();
         P2PMessage p2PMessage = channel.readInbound();
-        PongEvent pongEvent = (PongEvent) p2PMessage.getEvent();
-        assertEquals("abcdef", pongEvent.getPingHexString());
-        assertEquals(1533218340901L + 200, pongEvent.getExpires());
+        FindEvent findEvent = (FindEvent) p2PMessage.getEvent();
+        assertEquals("abcdef", findEvent.getNearDistance());
+        assertEquals(1533218340901L + 200, findEvent.getExpires());
     }
 
     @Test
