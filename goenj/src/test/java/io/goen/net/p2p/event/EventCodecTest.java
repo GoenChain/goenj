@@ -1,6 +1,8 @@
 package io.goen.net.p2p.event;
 
+import io.goen.core.GoenConfig;
 import io.goen.net.p2p.P2PMessage;
+import io.goen.util.FastByteComparisons;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -115,8 +117,35 @@ public class EventCodecTest {
 
     @Test
     public void encodeFind() {
+        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec());
+
+        FindEvent findEvent = new FindEvent();
+        findEvent.setExpires(1533218340901L + 200);
+        findEvent.setNearDistance(GoenConfig.system.localNodeId());
+        P2PMessage p2pMessageForPong = new P2PMessage(new InetSocketAddress("192.168.1.1", 30245), findEvent);
+
+        assertTrue(channel.writeOutbound(p2pMessageForPong));
+        assertTrue(channel.finish());
+
+        DatagramPacket packetForPong = channel.readOutbound();
+
+        ByteBuf bufForFind = packetForPong.content();
+        byte[] testEncodeDataForFind = new byte[bufForFind.readableBytes()];
+        bufForFind.readBytes(testEncodeDataForFind);
+        System.out.println(Hex.toHexString(testEncodeDataForFind));
+
+        FindEvent decodeFindEvent = new FindEvent();
+        decodeFindEvent.parse(testEncodeDataForFind);
+
+        assertEquals(0,FastByteComparisons.compareTo(findEvent.getNearDistance(),decodeFindEvent.getNearDistance()));
+        assertEquals(findEvent.getExpires(), decodeFindEvent.getExpires());
+    }
+
+    @Test
+    public void decodeFind() throws Exception {
+    //fa7640135762b84b065652c6ff70a7f2f78e6b678f4803314145f30d25f4436a01036dac1f660f86def0a7ab6f2a9f6b15c7c2bea9af662fd4ff450f7ce7a451dcb729000753b1cb7980bde840f04e2c8f93f32931b4e03879de4216171874710c8a00eaa0fd5c036c3919c9bf048b59e5edc9e7a940a6b455094d19ea1f96eb0bc152764b8800000164faef40ed
         ByteBuf buf = Unpooled.buffer();
-        String hexString = "92c7524844ff4ed43eae004f4137c15ca70ed301c762bac7d6ade03a1207b9730102c842ca9db7b2101ce13d88e1e13c00ec45e761b315f04c2dd5e6780d1e1c9e62287b13c547071c8010d88f097d03b4866d419fcac87e877e93fcb512ba964dad00cd83abcdef8800000164faef40ed";
+        String hexString = "fa7640135762b84b065652c6ff70a7f2f78e6b678f4803314145f30d25f4436a01036dac1f660f86def0a7ab6f2a9f6b15c7c2bea9af662fd4ff450f7ce7a451dcb729000753b1cb7980bde840f04e2c8f93f32931b4e03879de4216171874710c8a00eaa0fd5c036c3919c9bf048b59e5edc9e7a940a6b455094d19ea1f96eb0bc152764b8800000164faef40ed";
 
         buf.writeBytes(Hex.decode(hexString));
         ByteBuf input = buf.duplicate();
@@ -126,11 +155,8 @@ public class EventCodecTest {
         channel.finish();
         P2PMessage p2PMessage = channel.readInbound();
         FindEvent findEvent = (FindEvent) p2PMessage.getEvent();
-        assertEquals("abcdef", findEvent.getNearDistance());
+        assertEquals(0,FastByteComparisons.compareTo(GoenConfig.system.localNodeId(), findEvent.getNearDistance()));
         assertEquals(1533218340901L + 200, findEvent.getExpires());
     }
 
-    @Test
-    public void decodeFind() throws Exception {
-    }
 }

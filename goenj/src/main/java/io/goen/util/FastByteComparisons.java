@@ -29,6 +29,14 @@ public class FastByteComparisons {
                 b1, s1, l1, b2, s2, l2);
     }
 
+    /**
+     * Lexicographically compare two byte arrays.
+     */
+    public static int compareTo(byte[] b1, byte[] b2) {
+        return LexicographicalComparerHolder.BEST_COMPARER.compareTo(
+                b1, 0, b1.length, b2, 0, b2.length);
+    }
+
     private interface Comparer<T> {
         abstract public int compareTo(T buffer1, int offset1, int length1,
                                       T buffer2, int offset2, int length2);
