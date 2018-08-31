@@ -2,6 +2,7 @@ package io.goen.net.p2p.event;
 
 import io.goen.net.p2p.Node;
 import io.goen.rlp.RLP;
+import io.goen.rlp.RLPItem;
 import io.goen.rlp.RLPList;
 import io.goen.util.ByteUtil;
 
@@ -25,7 +26,7 @@ public class NodesEvent extends Event{
         nodes = new ArrayList<>();
 
         for (int i = 0; i < nodesRLP.size(); ++i) {
-            RLPList nodeRLP = (RLPList) nodesRLP.get(i);
+            RLPItem nodeRLP = (RLPItem) nodesRLP.get(i);
             Node node = new Node(nodeRLP.getRLPData());
             nodes.add(node);
         }

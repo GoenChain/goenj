@@ -49,7 +49,7 @@ public class Node {
 	}
 
 	public Node(byte[] gnodeRPL){
-		this(new String(RLP.decode2OneItem(gnodeRPL, 0).getRLPData()));
+		this(new String(gnodeRPL));
 	}
 
 	public byte[] getBytes() {

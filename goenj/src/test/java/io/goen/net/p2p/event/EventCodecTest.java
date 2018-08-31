@@ -1,6 +1,9 @@
 package io.goen.net.p2p.event;
 
+import com.google.common.collect.Lists;
+import com.google.common.net.InetAddresses;
 import io.goen.core.GoenConfig;
+import io.goen.net.p2p.Node;
 import io.goen.net.p2p.P2PMessage;
 import io.goen.util.FastByteComparisons;
 import io.netty.buffer.ByteBuf;
@@ -11,6 +14,7 @@ import org.junit.Test;
 import org.spongycastle.util.encoders.Hex;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -142,8 +146,60 @@ public class EventCodecTest {
     }
 
     @Test
-    public void decodeFind() throws Exception {
+    public void decodeFind(){
     //fa7640135762b84b065652c6ff70a7f2f78e6b678f4803314145f30d25f4436a01036dac1f660f86def0a7ab6f2a9f6b15c7c2bea9af662fd4ff450f7ce7a451dcb729000753b1cb7980bde840f04e2c8f93f32931b4e03879de4216171874710c8a00eaa0fd5c036c3919c9bf048b59e5edc9e7a940a6b455094d19ea1f96eb0bc152764b8800000164faef40ed
+        ByteBuf buf = Unpooled.buffer();
+        String hexString = "fa7640135762b84b065652c6ff70a7f2f78e6b678f4803314145f30d25f4436a01036dac1f660f86def0a7ab6f2a9f6b15c7c2bea9af662fd4ff450f7ce7a451dcb729000753b1cb7980bde840f04e2c8f93f32931b4e03879de4216171874710c8a00eaa0fd5c036c3919c9bf048b59e5edc9e7a940a6b455094d19ea1f96eb0bc152764b8800000164faef40ed";
+
+        buf.writeBytes(Hex.decode(hexString));
+        ByteBuf input = buf.duplicate();
+        DatagramPacket packet = new DatagramPacket(input, new InetSocketAddress("192.168.1.1", 30245));
+        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec());
+        channel.writeInbound(packet);
+        channel.finish();
+        P2PMessage p2PMessage = channel.readInbound();
+        FindEvent findEvent = (FindEvent) p2PMessage.getEvent();
+        assertEquals(0,FastByteComparisons.compareTo(GoenConfig.system.localNodeId(), findEvent.getNearDistance()));
+        assertEquals(1533218340901L + 200, findEvent.getExpires());
+    }
+
+
+    @Test
+    public void encodeNodes() {
+        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec());
+
+        NodesEvent nodesEvent = new NodesEvent();
+        nodesEvent.setExpires(1533218340901L + 200);
+        List<Node> nodeList = Lists.newArrayList();
+        Node nodeA = new Node("FFFF".getBytes(), InetAddresses.forString("192.168.1.1"),30241);
+        Node nodeB = new Node("FFFE".getBytes(), InetAddresses.forString("192.168.1.2"),30241);
+        nodeList.add(nodeA);
+        nodeList.add(nodeB);
+        nodesEvent.setNodes(nodeList);
+        P2PMessage p2pMessageForNodes = new P2PMessage(new InetSocketAddress("192.168.1.1", 30245), nodesEvent);
+
+        assertTrue(channel.writeOutbound(p2pMessageForNodes));
+        assertTrue(channel.finish());
+
+        DatagramPacket packetForNodes = channel.readOutbound();
+
+        ByteBuf bufForNode = packetForNodes.content();
+        byte[] testEncodeDataForNodes = new byte[bufForNode.readableBytes()];
+        bufForNode.readBytes(testEncodeDataForNodes);
+        System.out.println(Hex.toHexString(testEncodeDataForNodes));
+
+        NodesEvent decodeNodesEvent = new NodesEvent();
+        decodeNodesEvent.parse(testEncodeDataForNodes);
+
+        assertEquals(nodeList.size(), decodeNodesEvent.getNodes().size());
+        assertEquals(nodeA.getPort(), decodeNodesEvent.getNodes().get(0).getPort());
+        assertEquals(nodeB.getPort(), decodeNodesEvent.getNodes().get(1).getPort());
+        assertEquals(nodesEvent.getExpires(), decodeNodesEvent.getExpires());
+    }
+
+    @Test
+    public void decodeNodes() {
+        //fa7640135762b84b065652c6ff70a7f2f78e6b678f4803314145f30d25f4436a01036dac1f660f86def0a7ab6f2a9f6b15c7c2bea9af662fd4ff450f7ce7a451dcb729000753b1cb7980bde840f04e2c8f93f32931b4e03879de4216171874710c8a00eaa0fd5c036c3919c9bf048b59e5edc9e7a940a6b455094d19ea1f96eb0bc152764b8800000164faef40ed
         ByteBuf buf = Unpooled.buffer();
         String hexString = "fa7640135762b84b065652c6ff70a7f2f78e6b678f4803314145f30d25f4436a01036dac1f660f86def0a7ab6f2a9f6b15c7c2bea9af662fd4ff450f7ce7a451dcb729000753b1cb7980bde840f04e2c8f93f32931b4e03879de4216171874710c8a00eaa0fd5c036c3919c9bf048b59e5edc9e7a940a6b455094d19ea1f96eb0bc152764b8800000164faef40ed";
 
