@@ -199,9 +199,9 @@ public class EventCodecTest {
 
     @Test
     public void decodeNodes() {
-        //fa7640135762b84b065652c6ff70a7f2f78e6b678f4803314145f30d25f4436a01036dac1f660f86def0a7ab6f2a9f6b15c7c2bea9af662fd4ff450f7ce7a451dcb729000753b1cb7980bde840f04e2c8f93f32931b4e03879de4216171874710c8a00eaa0fd5c036c3919c9bf048b59e5edc9e7a940a6b455094d19ea1f96eb0bc152764b8800000164faef40ed
+        //4575e698286131e9b7698b8b927eddac5032d39e8d4aa6c35d58ddef67b31ec801049670b5b68608e65fdd4d24ddc7de80decea8e6a1b5a1cb1590005560de5ed18e1fc16d1cc18ae0571d7316774f6238cfe6344d21e49d558904e17a2fa6f2bcff00f851f846a2676e6f64653a2f2f3436343634363436403139322e3136382e312e313a3330323431a2676e6f64653a2f2f3436343634363435403139322e3136382e312e323a33303234318800000164faef40ed
         ByteBuf buf = Unpooled.buffer();
-        String hexString = "fa7640135762b84b065652c6ff70a7f2f78e6b678f4803314145f30d25f4436a01036dac1f660f86def0a7ab6f2a9f6b15c7c2bea9af662fd4ff450f7ce7a451dcb729000753b1cb7980bde840f04e2c8f93f32931b4e03879de4216171874710c8a00eaa0fd5c036c3919c9bf048b59e5edc9e7a940a6b455094d19ea1f96eb0bc152764b8800000164faef40ed";
+        String hexString = "4575e698286131e9b7698b8b927eddac5032d39e8d4aa6c35d58ddef67b31ec801049670b5b68608e65fdd4d24ddc7de80decea8e6a1b5a1cb1590005560de5ed18e1fc16d1cc18ae0571d7316774f6238cfe6344d21e49d558904e17a2fa6f2bcff00f851f846a2676e6f64653a2f2f3436343634363436403139322e3136382e312e313a3330323431a2676e6f64653a2f2f3436343634363435403139322e3136382e312e323a33303234318800000164faef40ed";
 
         buf.writeBytes(Hex.decode(hexString));
         ByteBuf input = buf.duplicate();
@@ -210,9 +210,11 @@ public class EventCodecTest {
         channel.writeInbound(packet);
         channel.finish();
         P2PMessage p2PMessage = channel.readInbound();
-        FindEvent findEvent = (FindEvent) p2PMessage.getEvent();
-        assertEquals(0,FastByteComparisons.compareTo(GoenConfig.system.localNodeId(), findEvent.getNearDistance()));
-        assertEquals(1533218340901L + 200, findEvent.getExpires());
+        NodesEvent nodesEvent = (NodesEvent) p2PMessage.getEvent();
+        assertEquals(2, nodesEvent.getNodes().size());
+        assertEquals(30241, nodesEvent.getNodes().get(0).getPort());
+        assertEquals(30241, nodesEvent.getNodes().get(1).getPort());
+        assertEquals(1533218340901L + 200, nodesEvent.getExpires());
     }
 
 }
