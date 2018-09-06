@@ -14,13 +14,6 @@ public class OutP2PEventHandler extends ChannelOutboundHandlerAdapter{
 
     private final static Logger logger = LoggerFactory.getLogger("net");
 
-    private Sender sender;
-
-
-    public OutP2PEventHandler(final Sender sender){
-        this.sender = sender;
-    }
-
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
         if(msg instanceof P2PMessage){
