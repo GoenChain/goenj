@@ -62,7 +62,7 @@ public class DiscoveryEngine implements Engine {
 						ch.pipeline().addLast(new EventCodec());
 						InP2PEventHandler inEventHandler = new InP2PEventHandler(sender);
 						ch.pipeline().addLast(inEventHandler);
-						OutP2PEventHandler outEventHandler = new OutP2PEventHandler(sender);
+						OutP2PEventHandler outEventHandler = new OutP2PEventHandler();
 						ch.pipeline().addLast(outEventHandler);
 					}
 				});
