@@ -1,18 +1,13 @@
 package io.goen.net.p2p;
 
-import java.net.InetSocketAddress;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import org.junit.Test;
-
 import com.google.common.net.InetAddresses;
-import io.goen.net.p2p.event.PingEvent;
+import org.junit.Test;
 
 public class DiscoveryEngineBTest {
     @Test
     public void testB(){
-        DiscoveryEngine deB = new DiscoveryEngine(InetAddresses.forString("127.0.0.1"), 20356);
+        NodesCenter nodesCenter = new NodesCenter();
+        DiscoveryEngine deB = new DiscoveryEngine(InetAddresses.forString("127.0.0.1"), 20356,nodesCenter);
         deB.start();
     }
 

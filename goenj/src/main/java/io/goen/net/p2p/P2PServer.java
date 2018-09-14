@@ -9,26 +9,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class P2PServer {
-	Logger logger = LoggerFactory.getLogger("p2p");
+    Logger logger = LoggerFactory.getLogger("p2p");
 
-	private int port;
-	private InetAddress host;
+    NodesCenter nodesCenter = new NodesCenter();
 
-	public P2PServer() {
+    private int port;
+    private InetAddress host;
 
-		init(GoenConfig.system.p2pDiscoveryPeers());
-	}
+    public P2PServer() {
 
-	public void init(List<String> peers) {
-		logger.info("starting p2p Server");
-		final List<Node> bootNodes = new ArrayList<>();
+        init(GoenConfig.system.p2pDiscoveryPeers());
+    }
 
-		for (String bootPeerURI : peers) {
-			bootNodes.add(new Node(bootPeerURI));
-		}
-		DiscoveryEngine engine = new DiscoveryEngine(host, port);
-		engine.start();
-	}
+    public void init(List<String> peers) {
+        logger.info("starting p2p Server");
+        final List<Node> bootNodes = new ArrayList<>();
+
+        for (String bootPeerURI : peers) {
+            bootNodes.add(new Node(bootPeerURI));
+        }
+        DiscoveryEngine engine = new DiscoveryEngine(host, port, nodesCenter);
+        engine.start();
+    }
+
+    public static void main(String[] args) {
+        P2PServer p2PServer = new P2PServer();
+    }
 
 
 }
