@@ -4,9 +4,11 @@ import io.goen.core.GoenConfig;
 import io.goen.net.p2p.dht.DistributedHashTable;
 import io.goen.net.p2p.dht.KadConfig;
 import io.goen.util.HashUtil;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class NodesCenter {
     private DistributedHashTable dht;
 

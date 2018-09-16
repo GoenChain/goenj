@@ -28,8 +28,12 @@ public class P2PServer {
         for (String bootPeerURI : peers) {
             bootNodes.add(new Node(bootPeerURI));
         }
-        DiscoveryEngine engine = new DiscoveryEngine(host, port, nodesCenter);
+        DiscoveryEngine engine = new DiscoveryEngine(GoenConfig.system.boundHost(), GoenConfig.system.p2pDiscoveryPort(), nodesCenter);
         engine.start();
+    }
+
+    public NodesCenter getNodesCenter() {
+        return nodesCenter;
     }
 
     public static void main(String[] args) {
