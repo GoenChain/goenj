@@ -3,22 +3,26 @@ package io.goen.net.p2p;
 import io.goen.core.GoenConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.net.InetAddress;
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class P2PServer {
     Logger logger = LoggerFactory.getLogger("p2p");
 
-    NodesCenter nodesCenter = new NodesCenter();
+    @Autowired
+    NodesCenter nodesCenter;
 
-    private int port;
-    private InetAddress host;
+    @Autowired
+    GoenConfig config;
 
-    public P2PServer() {
-
-        init(GoenConfig.system.p2pDiscoveryPeers());
+    @PostConstruct
+    public void init() {
+        init(config.p2pDiscoveryPeers());
     }
 
     public void init(List<String> peers) {
@@ -28,12 +32,8 @@ public class P2PServer {
         for (String bootPeerURI : peers) {
             bootNodes.add(new Node(bootPeerURI));
         }
-        DiscoveryEngine engine = new DiscoveryEngine(GoenConfig.system.boundHost(), GoenConfig.system.p2pDiscoveryPort(), nodesCenter);
+        DiscoveryEngine engine = new DiscoveryEngine(nodesCenter);
         engine.start();
-    }
-
-    public NodesCenter getNodesCenter() {
-        return nodesCenter;
     }
 
     public static void main(String[] args) {

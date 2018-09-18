@@ -11,17 +11,22 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+@Component
 public class DiscoveryEngine implements Engine {
     private final static Logger logger = LoggerFactory.getLogger("net.p2p");
     private InetAddress ip;
     private int port;
     private List<Node> bootNodes;
+
+    @Autowired
     private NodesCenter nodesCenter;
 
 
@@ -29,9 +34,9 @@ public class DiscoveryEngine implements Engine {
 
     private Sender sender;
 
-    public DiscoveryEngine(InetAddress ip, int port, NodesCenter nodesCenter) {
-        this.ip = ip;
-        this.port = port;
+    public DiscoveryEngine(NodesCenter nodesCenter) {
+        this.ip = nodesCenter.getSelfNode().getIp();
+        this.port = nodesCenter.getSelfNode().getPort();
         this.nodesCenter = nodesCenter;
     }
 
@@ -60,7 +65,7 @@ public class DiscoveryEngine implements Engine {
                     @Override
                     public void initChannel(NioDatagramChannel ch) throws Exception {
                         sender = new Sender(ch);
-                        ch.pipeline().addLast(new EventCodec());
+                        ch.pipeline().addLast(new EventCodec(nodesCenter.getPriKey()));
                         InP2PEventHandler inEventHandler = new InP2PEventHandler(sender,nodesCenter);
                         ch.pipeline().addLast(inEventHandler);
                         OutP2PEventHandler outEventHandler = new OutP2PEventHandler();

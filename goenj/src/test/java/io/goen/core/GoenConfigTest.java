@@ -9,7 +9,7 @@ public class GoenConfigTest {
 
 	@Test
 	public void test() {
-		List<String> strings = GoenConfig.system.p2pDiscoveryPeers();
+		List<String> strings = GoenConfig.getSystem().p2pDiscoveryPeers();
 		for (String peer : strings) {
 			System.out.println(peer);
 		}

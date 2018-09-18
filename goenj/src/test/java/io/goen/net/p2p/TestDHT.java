@@ -6,13 +6,11 @@ import io.goen.net.p2p.dht.DistributedHashTable;
 import io.goen.util.HashUtil;
 import org.junit.Test;
 
-import java.net.InetSocketAddress;
-
 public class TestDHT {
 
     @Test
     public void testDHT(){
-        byte[] selfId = HashUtil.sha256(GoenConfig.system.publicKey());
+        byte[] selfId = HashUtil.sha256(GoenConfig.getSystem().publicKey());
         Node node = new  Node(selfId, InetAddresses.forString("127.0.0.1"),30222);
         Node nodeA = new  Node(HashUtil.sha256("nodeA".getBytes()), InetAddresses.forString("127.0.0.5"),30222);
         Node nodeB = new  Node(HashUtil.sha256("nodeB".getBytes()), InetAddresses.forString("127.0.0.2"),30222);

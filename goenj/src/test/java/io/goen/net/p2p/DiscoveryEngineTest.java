@@ -1,6 +1,5 @@
 package io.goen.net.p2p;
 
-import com.google.common.net.InetAddresses;
 import io.goen.net.p2p.dht.KadConfig;
 import io.goen.net.p2p.event.PingEvent;
 import org.junit.Test;
@@ -11,7 +10,7 @@ public class DiscoveryEngineTest {
     @Test
     public void testA() {
         NodesCenter nodesCenter = new NodesCenter();
-        DiscoveryEngine deA = new DiscoveryEngine(InetAddresses.forString("127.0.0.1"), 20355, nodesCenter);
+        DiscoveryEngine deA = new DiscoveryEngine(nodesCenter);
 
         Thread threadA = new Thread(() -> {
             deA.start();

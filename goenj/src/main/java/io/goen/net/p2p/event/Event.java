@@ -1,7 +1,6 @@
 package io.goen.net.p2p.event;
 
 import com.google.common.base.Verify;
-import io.goen.core.GoenConfig;
 import io.goen.crypto.ECDSASignature;
 import io.goen.crypto.ECKey;
 import io.goen.util.ByteUtil;
@@ -144,7 +143,7 @@ public abstract class Event {
 [mdc(32byte)][version(1byte)][type(1byte)][signature(65byte)][data(undefined)
 
  **/
-    byte[] getBytes(){
+byte[] getBytes(ECKey priKey) {
         this.data = getDataBytes();
         byte[] checkData = new byte[2 + this.getData().length];
         checkData[0] = this.getVersion()[0];
@@ -153,7 +152,7 @@ public abstract class Event {
         System.arraycopy(this.getData(), 0, checkData, 2, this.getData().length);
         byte[] forSig = HashUtil.sha256(checkData);
 
-        ECDSASignature signature = GoenConfig.system.systemKey().sign(forSig);
+    ECDSASignature signature = priKey.sign(forSig);
 
         signature.v -= 27;
 

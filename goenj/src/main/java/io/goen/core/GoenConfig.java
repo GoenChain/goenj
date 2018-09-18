@@ -1,5 +1,13 @@
 package io.goen.core;
 
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+import io.goen.crypto.ECKey;
+import io.goen.util.HashUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.spongycastle.util.encoders.Hex;
+
 import java.io.File;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,18 +18,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
-import io.goen.util.HashUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.spongycastle.util.encoders.Hex;
-
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
-import io.goen.crypto.ECKey;
-
 public class GoenConfig {
 
-	private final static Logger logger = LoggerFactory.getLogger("config");
+	private final static Logger logger = LoggerFactory.getLogger("component");
 
 	private static final String DEFAULT_FILE = "goen.conf";
 
@@ -34,7 +33,11 @@ public class GoenConfig {
 
 	private Config config;
 
-	public static GoenConfig system = new GoenConfig();
+	private static GoenConfig system = new GoenConfig();
+
+	public static GoenConfig getSystem() {
+		return system;
+	}
 
 	public GoenConfig() {
 		this(new File(Thread.currentThread().getContextClassLoader().getResource(DEFAULT_FILE).getFile()));
@@ -46,10 +49,10 @@ public class GoenConfig {
 	}
 
 	public GoenConfig(Config config) {
-		logger.info("goen config loading start");
+		logger.info("goen component loading start");
 		this.config = config;
 		printConfig();
-		logger.info("goen config loading end");
+		logger.info("goen component loading end");
 	}
 
 
@@ -112,7 +115,7 @@ public class GoenConfig {
 	}
 
 	private void printConfig() {
-		logger.info("goen config:");
+		logger.info("goen component:");
 		logger.info("=========================");
 		for (Method method : getClass().getMethods()) {
 			try {
@@ -132,7 +135,7 @@ public class GoenConfig {
 
 				}
 			} catch (Exception e) {
-				throw new RuntimeException("Error the config parameter is error: " + method, e);
+				throw new RuntimeException("Error the component parameter is error: " + method, e);
 			}
 		}
 		logger.info("=========================");

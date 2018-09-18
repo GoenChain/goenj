@@ -16,7 +16,8 @@ import org.spongycastle.util.encoders.Hex;
 import java.net.InetSocketAddress;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class EventCodecTest {
     @Test
@@ -33,7 +34,7 @@ public class EventCodecTest {
 
         P2PMessage p2pMessage = new P2PMessage(new InetSocketAddress(pingEvent.getToIp(), pingEvent.getToPort()), pingEvent);
 
-        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec());
+        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec(GoenConfig.getSystem().systemKey()));
         //output p2pMessge
         assertTrue(channel.writeOutbound(p2pMessage));
         assertTrue(channel.finish());
@@ -63,7 +64,7 @@ public class EventCodecTest {
         buf.writeBytes(Hex.decode(hexString));
         ByteBuf input = buf.duplicate();
         DatagramPacket packet = new DatagramPacket(input, new InetSocketAddress("192.168.1.1", 30245));
-        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec());
+        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec(GoenConfig.getSystem().systemKey()));
         channel.writeInbound(packet);
         channel.finish();
         P2PMessage p2PMessage = channel.readInbound();
@@ -77,7 +78,7 @@ public class EventCodecTest {
 
     @Test
     public void encodePong() {
-        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec());
+        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec(GoenConfig.getSystem().systemKey()));
         //PoneEvent
 
         PongEvent pongEvent = new PongEvent();
@@ -110,7 +111,7 @@ public class EventCodecTest {
         buf.writeBytes(Hex.decode(hexString));
         ByteBuf input = buf.duplicate();
         DatagramPacket packet = new DatagramPacket(input, new InetSocketAddress("192.168.1.1", 30245));
-        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec());
+        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec(GoenConfig.getSystem().systemKey()));
         channel.writeInbound(packet);
         channel.finish();
         P2PMessage p2PMessage = channel.readInbound();
@@ -121,11 +122,11 @@ public class EventCodecTest {
 
     @Test
     public void encodeFind() {
-        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec());
+        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec(GoenConfig.getSystem().systemKey()));
 
         FindEvent findEvent = new FindEvent();
         findEvent.setExpires(1533218340901L + 200);
-        findEvent.setNearDistance(GoenConfig.system.localNodeId());
+        findEvent.setNearDistance(GoenConfig.getSystem().localNodeId());
         P2PMessage p2pMessageForPong = new P2PMessage(new InetSocketAddress("192.168.1.1", 30245), findEvent);
 
         assertTrue(channel.writeOutbound(p2pMessageForPong));
@@ -154,19 +155,19 @@ public class EventCodecTest {
         buf.writeBytes(Hex.decode(hexString));
         ByteBuf input = buf.duplicate();
         DatagramPacket packet = new DatagramPacket(input, new InetSocketAddress("192.168.1.1", 30245));
-        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec());
+        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec(GoenConfig.getSystem().systemKey()));
         channel.writeInbound(packet);
         channel.finish();
         P2PMessage p2PMessage = channel.readInbound();
         FindEvent findEvent = (FindEvent) p2PMessage.getEvent();
-        assertEquals(0,FastByteComparisons.compareTo(GoenConfig.system.localNodeId(), findEvent.getNearDistance()));
+        assertEquals(0, FastByteComparisons.compareTo(GoenConfig.getSystem().localNodeId(), findEvent.getNearDistance()));
         assertEquals(1533218340901L + 200, findEvent.getExpires());
     }
 
 
     @Test
     public void encodeNodes() {
-        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec());
+        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec(GoenConfig.getSystem().systemKey()));
 
         NodesEvent nodesEvent = new NodesEvent();
         nodesEvent.setExpires(1533218340901L + 200);
@@ -206,7 +207,7 @@ public class EventCodecTest {
         buf.writeBytes(Hex.decode(hexString));
         ByteBuf input = buf.duplicate();
         DatagramPacket packet = new DatagramPacket(input, new InetSocketAddress("192.168.1.1", 30245));
-        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec());
+        EmbeddedChannel channel = new EmbeddedChannel(new EventCodec(GoenConfig.getSystem().systemKey()));
         channel.writeInbound(packet);
         channel.finish();
         P2PMessage p2PMessage = channel.readInbound();
