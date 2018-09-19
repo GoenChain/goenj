@@ -21,7 +21,7 @@ public abstract class Event {
 
     private byte[] version;
 
-    public Event(){
+    public Event() {
         this.version = new byte[]{1};
     }
 
@@ -65,12 +65,14 @@ public abstract class Event {
     public void setVersion(byte[] version) {
         this.version = version;
     }
+
     //From byte[]
     public abstract void parseData(byte[] encodedData);
+
     //To byte[]
     public abstract byte[] getDataBytes();
 
-    public byte[] getNodeId(){
+    public byte[] getNodeId() {
         ECDSASignature ecdsaSignature = new ECDSASignature(BigIntegers.fromUnsignedByteArray(signature, 0, 32), BigIntegers.fromUnsignedByteArray(signature, 32, 32));
         byte[] rawData = ByteUtil.merge(version, type, data);
         byte[] pubKey = ECKey.recoverPubBytesFromSignature(signature[64], ecdsaSignature, HashUtil.sha256(rawData));
@@ -78,11 +80,9 @@ public abstract class Event {
     }
 
     /**
-     *
-     [mdc(32byte)][version(1byte)][type(1byte)][signature(65byte)][data(undefined)
-
+     * [mdc(32byte)][version(1byte)][type(1byte)][signature(65byte)][data(undefined)
      **/
-    public void parse(byte[] encodedData){
+    public void parse(byte[] encodedData) {
 
         this.mdc = new byte[32];
         System.arraycopy(encodedData, 0, mdc, 0, 32);
@@ -108,14 +108,14 @@ public abstract class Event {
 
         int check = FastByteComparisons.compareTo(mdc, 0, mdc.length, mdcCheck, 0, mdcCheck.length);
 
-        Verify.verify(check == 0,"MDC check failed");
-        Verify.verify(version[0] == 1,"version can't handle");
+        Verify.verify(check == 0, "MDC check failed");
+        Verify.verify(version[0] == 1, "version can't handle");
 
         //sub evnet
         parseData(data);
     }
 
-    public static Event genEvent(byte[] encodedData){
+    public static Event genEvent(byte[] encodedData) {
         byte type = encodedData[33];
         Event event;
         switch (type) {
@@ -138,12 +138,10 @@ public abstract class Event {
         return event;
     }
 
-/**
-*
-[mdc(32byte)][version(1byte)][type(1byte)][signature(65byte)][data(undefined)
-
- **/
-byte[] getBytes(ECKey priKey) {
+    /**
+     * [mdc(32byte)][version(1byte)][type(1byte)][signature(65byte)][data(undefined)
+     **/
+    byte[] getBytes(ECKey priKey) {
         this.data = getDataBytes();
         byte[] checkData = new byte[2 + this.getData().length];
         checkData[0] = this.getVersion()[0];
@@ -152,14 +150,14 @@ byte[] getBytes(ECKey priKey) {
         System.arraycopy(this.getData(), 0, checkData, 2, this.getData().length);
         byte[] forSig = HashUtil.sha256(checkData);
 
-    ECDSASignature signature = priKey.sign(forSig);
+        ECDSASignature signature = priKey.sign(forSig);
 
         signature.v -= 27;
 
         byte[] sigBytes = ByteUtil.merge(BigIntegers.asUnsignedByteArray(32, signature.r), BigIntegers
-                .asUnsignedByteArray(32, signature.s), new byte[] { signature.v });
+                .asUnsignedByteArray(32, signature.s), new byte[]{signature.v});
 
-        byte[] forSha = ByteUtil.merge(this.getVersion(), this.getType(), sigBytes,this.getData());
+        byte[] forSha = ByteUtil.merge(this.getVersion(), this.getType(), sigBytes, this.getData());
         byte[] mdc = HashUtil.sha256(forSha);
 
         return ByteUtil.merge(mdc, forSha);

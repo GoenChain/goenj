@@ -29,6 +29,8 @@ public class GoenConfig {
 	private static final String P2P_DISCOVERY_BOUND_IP = "p2p.discovery.bound.ip";
 	private static final String P2P_DISCOVERY_PORT = "p2p.discovery.port";
 	private static final String P2P_START = "p2p.start";
+	private static final String P2P_FIND_START = "p2p.find.start";
+	private static final String P2P_CHECK_START = "p2p.check.start";
 	private static final String P2P_BOOT_PEERS = "p2p.boot.peers";
 
 	private Config config;
@@ -63,6 +65,16 @@ public class GoenConfig {
 	@PrintValue
 	public boolean p2pStart() {
 		return config.getBoolean(P2P_START);
+	}
+
+	@PrintValue
+	public boolean p2pFindStart() {
+		return config.getBoolean(P2P_FIND_START);
+	}
+
+	@PrintValue
+	public boolean p2pCheckStart() {
+		return config.getBoolean(P2P_CHECK_START);
 	}
 
 	@PrintValue

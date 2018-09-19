@@ -7,12 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class P2PServer {
-    Logger logger = LoggerFactory.getLogger("p2p");
+    private final static Logger logger = LoggerFactory.getLogger("net.p2p");
 
     @Autowired
     NodesCenter nodesCenter;
@@ -28,11 +27,12 @@ public class P2PServer {
     public void init(List<String> peers) {
         if (config.p2pStart()) {
             logger.info("starting p2p Server");
-            final List<Node> bootNodes = new ArrayList<>();
 
             for (String bootPeerURI : peers) {
-                bootNodes.add(new Node(bootPeerURI));
+                nodesCenter.nodeInsert(new Node(bootPeerURI));
+                logger.info("loading node:{}", bootPeerURI);
             }
+
             DiscoveryEngine engine = new DiscoveryEngine(nodesCenter);
             engine.start();
         } else {

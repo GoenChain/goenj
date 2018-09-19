@@ -28,7 +28,7 @@ public class InP2PEventHandler extends SimpleChannelInboundHandler<P2PMessage> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, P2PMessage msg) throws Exception {
-        logger.info("rec a msg:{}", msg.getEvent().getType());
+        logger.info("rec a msg:{}", msg.getEvent().getClass().getSimpleName());
         Event event = msg.getEvent();
         InetSocketAddress inetSocketAddress = msg.getInetSocketAddress();
         Node node = new Node(event.getNodeId(), inetSocketAddress.getAddress(), inetSocketAddress.getPort());
@@ -40,18 +40,22 @@ public class InP2PEventHandler extends SimpleChannelInboundHandler<P2PMessage> {
             // PingEvent
             case 1:
                 handlePingEvent(node, (PingEvent) event);
+                logger.info("handle ping event");
                 break;
             // PongEvent
             case 2:
                 handlePongEvent(node, (PongEvent) event);
+                logger.info("handle pong event");
                 break;
             // FindEvent:
             case 3:
                 handleFindEvent(node, (FindEvent) event);
+                logger.info("handle find event");
                 break;
             // NodesEvent:
             case 4:
                 handleNodesEvent(node, (NodesEvent) event);
+                logger.info("handle nodes event");
                 break;
             default:
                 throw new RuntimeException("not known type:" + event.getType()[0]);

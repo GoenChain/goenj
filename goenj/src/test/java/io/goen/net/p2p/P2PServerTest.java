@@ -43,7 +43,7 @@ public class P2PServerTest {
     }
 
     @Test
-    public void testP2PServer() {
+    public void testP2PServerClient() {
         Thread sThread = new Thread(() -> {
             GoenStarter.start(ServerConfig.class);
         });
@@ -62,4 +62,34 @@ public class P2PServerTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void testP2PServer() {
+        Thread sThread = new Thread(() -> {
+            GoenStarter.start(ServerConfig.class);
+        });
+        sThread.start();
+
+        try {
+            sThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testP2PClient() {
+        Thread cThread = new Thread(() -> {
+            GoenStarter.start(ClientConfig.class);
+        });
+        cThread.start();
+
+        try {
+            cThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

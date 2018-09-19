@@ -4,6 +4,7 @@ import io.goen.net.Engine;
 import io.goen.net.p2p.event.EventCodec;
 import io.goen.net.p2p.event.InP2PEventHandler;
 import io.goen.net.p2p.event.OutP2PEventHandler;
+import io.goen.net.p2p.task.TaskExecutor;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -13,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -52,7 +52,7 @@ public class DiscoveryEngine implements Engine {
     public void start() {
 
         logger.info("starting discovery engine. listening: :[{}:{}]", ip, port);
-        InetSocketAddress inetSocketAddress = new InetSocketAddress(ip, port);
+
         NioEventLoopGroup group = new NioEventLoopGroup(1);
         Bootstrap b = new Bootstrap();
         b.group(group)
@@ -60,7 +60,9 @@ public class DiscoveryEngine implements Engine {
                 new ChannelInitializer<NioDatagramChannel>() {
                     @Override
                     public void initChannel(NioDatagramChannel ch) throws Exception {
-                        sender = new Sender(ch);
+                        if (sender == null) {
+                            sender = new Sender(ch);
+                        }
                         ch.pipeline().addLast(new EventCodec(nodesCenter.getPriKey()));
                         InP2PEventHandler inEventHandler = new InP2PEventHandler(sender,nodesCenter);
                         ch.pipeline().addLast(inEventHandler);
@@ -71,6 +73,10 @@ public class DiscoveryEngine implements Engine {
 
         try {
             channel = b.bind(port).sync().channel();
+            sender = new Sender(channel);
+
+            TaskExecutor taskExecutor = new TaskExecutor(sender, nodesCenter);
+            taskExecutor.start();
 
             channel.closeFuture().sync();
         } catch (InterruptedException e) {

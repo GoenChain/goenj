@@ -22,6 +22,14 @@ public class NodesCenter {
 
     private ECKey priKey;
 
+    public NodesCenter() {
+    }
+
+    public NodesCenter(GoenConfig config) {
+        this.config = config;
+        init();
+    }
+
     @PostConstruct
     public void init() {
         this.selfNode = new Node(HashUtil.sha256(config
@@ -44,6 +52,14 @@ public class NodesCenter {
 
     public Node getSelfNode() {
         return selfNode;
+    }
+
+    public boolean findAble() {
+        return config.p2pFindStart();
+    }
+
+    public boolean checkAble() {
+        return config.p2pCheckStart();
     }
 
     public ECKey getPriKey() {
