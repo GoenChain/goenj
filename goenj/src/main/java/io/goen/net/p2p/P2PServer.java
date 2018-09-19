@@ -26,19 +26,17 @@ public class P2PServer {
     }
 
     public void init(List<String> peers) {
-        logger.info("starting p2p Server");
-        final List<Node> bootNodes = new ArrayList<>();
+        if (config.p2pStart()) {
+            logger.info("starting p2p Server");
+            final List<Node> bootNodes = new ArrayList<>();
 
-        for (String bootPeerURI : peers) {
-            bootNodes.add(new Node(bootPeerURI));
+            for (String bootPeerURI : peers) {
+                bootNodes.add(new Node(bootPeerURI));
+            }
+            DiscoveryEngine engine = new DiscoveryEngine(nodesCenter);
+            engine.start();
+        } else {
+            logger.info("p2p Server not starting");
         }
-        DiscoveryEngine engine = new DiscoveryEngine(nodesCenter);
-        engine.start();
     }
-
-    public static void main(String[] args) {
-        P2PServer p2PServer = new P2PServer();
-    }
-
-
 }

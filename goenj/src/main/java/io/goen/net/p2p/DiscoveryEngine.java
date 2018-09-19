@@ -11,22 +11,18 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-@Component
 public class DiscoveryEngine implements Engine {
     private final static Logger logger = LoggerFactory.getLogger("net.p2p");
     private InetAddress ip;
     private int port;
     private List<Node> bootNodes;
 
-    @Autowired
     private NodesCenter nodesCenter;
 
 

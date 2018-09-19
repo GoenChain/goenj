@@ -2,7 +2,7 @@ package io.goen.net.p2p;
 
 import com.typesafe.config.ConfigFactory;
 import io.goen.core.GoenConfig;
-import io.goen.core.GoenMaker;
+import io.goen.core.GoenStarter;
 import org.junit.Test;
 import org.springframework.context.annotation.Bean;
 
@@ -45,12 +45,12 @@ public class P2PServerTest {
     @Test
     public void testP2PServer() {
         Thread sThread = new Thread(() -> {
-            GoenMaker.createGoen(ServerConfig.class);
+            GoenStarter.start(ServerConfig.class);
         });
         sThread.start();
 
         Thread cThread = new Thread(() -> {
-            GoenMaker.createGoen(ClientConfig.class);
+            GoenStarter.start(ClientConfig.class);
         });
 
         cThread.start();

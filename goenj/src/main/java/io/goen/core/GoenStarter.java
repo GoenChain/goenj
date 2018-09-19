@@ -6,24 +6,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-public class GoenMaker {
+public class GoenStarter {
     private static final Logger logger = LoggerFactory.getLogger("goen loader");
 
-    public static Goen createGoen() {
+    public static void start() {
         logger.info("Starting GoenJ...");
         ApplicationContext context = new AnnotationConfigApplicationContext(DefaultComponents.class);
-        return context.getBean(Goen.class);
     }
 
-    public static Goen createGoen(Class selfDefindedConfig) {
-        return selfDefindedConfig == null ? createGoen(new Class[]{DefaultComponents.class}) :
-                createGoen(DefaultComponents.class, selfDefindedConfig);
+    public static void start(Class selfDefindedConfig) {
+        if (selfDefindedConfig == null) {
+            start(new Class[]{DefaultComponents.class});
+        } else {
+            start(DefaultComponents.class, selfDefindedConfig);
+        }
     }
 
-    public static Goen createGoen(Class... springConfigurations) {
+    public static void start(Class... springConfigurations) {
         logger.info("Starting GoenJ...");
         ApplicationContext context = new AnnotationConfigApplicationContext(springConfigurations);
-//        ((AnnotationConfigApplicationContext) context).setAllowBeanDefinitionOverriding(true);
-        return context.getBean(Goen.class);
     }
 }
