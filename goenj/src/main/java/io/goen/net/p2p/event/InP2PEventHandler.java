@@ -6,6 +6,7 @@ import io.goen.net.p2p.NodesCenter;
 import io.goen.net.p2p.P2PMessage;
 import io.goen.net.p2p.Sender;
 import io.goen.net.p2p.dht.KadConfig;
+import io.goen.util.FastByteComparisons;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
@@ -87,6 +88,9 @@ public class InP2PEventHandler extends SimpleChannelInboundHandler<P2PMessage> {
     private void handleNodesEvent(Node node, NodesEvent nodesEvent) {
         List<Node> nodes = nodesEvent.getNodes();
         for (Node redNode : nodes) {
+            if (FastByteComparisons.compareTo(redNode.getNodeId(), nodesCenter.getSelfNode().getNodeId()) == 0) {
+                continue;
+            }
             nodesCenter.nodeInsert(redNode);
         }
     }

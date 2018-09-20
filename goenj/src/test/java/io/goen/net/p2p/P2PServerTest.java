@@ -42,6 +42,23 @@ public class P2PServerTest {
         }
     }
 
+    private static class ClientConfig2 {
+
+        private final String config = "client2.conf";
+
+        /**
+         * Instead of supplying properties via config file for the peer
+         * we are substituting the corresponding bean which returns required
+         * config for this instance.
+         */
+        @Bean
+        public GoenConfig systemGoenConfig() {
+            GoenConfig props = new GoenConfig();
+            props.overrideParams(ConfigFactory.parseResources(config));
+            return props;
+        }
+    }
+
     @Test
     public void testP2PServerClient() {
         Thread sThread = new Thread(() -> {
@@ -81,6 +98,20 @@ public class P2PServerTest {
     public void testP2PClient() {
         Thread cThread = new Thread(() -> {
             GoenStarter.start(ClientConfig.class);
+        });
+        cThread.start();
+
+        try {
+            cThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testP2PClient2() {
+        Thread cThread = new Thread(() -> {
+            GoenStarter.start(ClientConfig2.class);
         });
         cThread.start();
 

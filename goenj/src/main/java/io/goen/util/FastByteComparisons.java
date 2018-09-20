@@ -1,14 +1,13 @@
 package io.goen.util;
 
+import com.google.common.primitives.Longs;
+import com.google.common.primitives.UnsignedBytes;
+import sun.misc.Unsafe;
+
 import java.lang.reflect.Field;
 import java.nio.ByteOrder;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-
-import sun.misc.Unsafe;
-
-import com.google.common.primitives.Longs;
-import com.google.common.primitives.UnsignedBytes;
 
 /**
  * This is borrowed cassandra
@@ -37,6 +36,11 @@ public class FastByteComparisons {
                 b1, 0, b1.length, b2, 0, b2.length);
     }
 
+    public static boolean compare(byte[] b1, byte[] b2) {
+        return 0 == LexicographicalComparerHolder.BEST_COMPARER.compareTo(
+                b1, 0, b1.length, b2, 0, b2.length);
+    }
+
     private interface Comparer<T> {
         abstract public int compareTo(T buffer1, int offset1, int length1,
                                       T buffer2, int offset2, int length2);
@@ -59,6 +63,7 @@ public class FastByteComparisons {
                 LexicographicalComparerHolder.class.getName() + "$UnsafeComparer";
 
         static final Comparer<byte[]> BEST_COMPARER = getBestComparer();
+
         /**
          * Returns the Unsafe-using Comparer, or falls back to the pure-Java
          * implementation if unable to do so.
@@ -108,7 +113,9 @@ public class FastByteComparisons {
 
             static final Unsafe theUnsafe;
 
-            /** The offset to the first element in a byte array. */
+            /**
+             * The offset to the first element in a byte array.
+             */
             static final int BYTE_ARRAY_BASE_OFFSET;
 
             static {
@@ -174,11 +181,11 @@ public class FastByteComparisons {
                 int offset1Adj = offset1 + BYTE_ARRAY_BASE_OFFSET;
                 int offset2Adj = offset2 + BYTE_ARRAY_BASE_OFFSET;
 
-        /*
-         * Compare 8 bytes at a time. Benchmarking shows comparing 8 bytes at a
-         * time is no slower than comparing 4 bytes at a time even on 32-bit.
-         * On the other hand, it is substantially faster on 64-bit.
-         */
+                /*
+                 * Compare 8 bytes at a time. Benchmarking shows comparing 8 bytes at a
+                 * time is no slower than comparing 4 bytes at a time even on 32-bit.
+                 * On the other hand, it is substantially faster on 64-bit.
+                 */
                 for (int i = 0; i < minWords * Longs.BYTES; i += Longs.BYTES) {
                     long lw = theUnsafe.getLong(buffer1, offset1Adj + (long) i);
                     long rw = theUnsafe.getLong(buffer2, offset2Adj + (long) i);

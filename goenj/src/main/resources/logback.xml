@@ -38,14 +38,14 @@
         <appender-ref ref="FILE"/>
     </appender>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="ASYNC"/>
     </root>
 
 
     <logger name="org.springframework" level="ERROR"/>
-    <logger name="io.goen.net" level="DEBUG"/>
+    <logger name="io.goen.net" level="INFO"/>
 
 </configuration>
 
