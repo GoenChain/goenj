@@ -37,7 +37,8 @@ public class FastByteComparisons {
     }
 
     public static boolean compare(byte[] b1, byte[] b2) {
-        return 0 == LexicographicalComparerHolder.BEST_COMPARER.compareTo(
+
+        return b1.length == b2.length && 0 == LexicographicalComparerHolder.BEST_COMPARER.compareTo(
                 b1, 0, b1.length, b2, 0, b2.length);
     }
 

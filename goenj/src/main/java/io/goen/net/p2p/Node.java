@@ -14,7 +14,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class Node {
-    private Logger logger = LoggerFactory.getLogger("net");
+    private static final Logger logger = LoggerFactory.getLogger("net.p2p");
     private byte[] nodeId;
     private InetAddress ip;
     private int port;
@@ -97,6 +97,7 @@ public class Node {
         if (!(obj instanceof Node)) {
             return false;
         }
+        logger.info("{} compare {} result {}", Hex.toHexString(((Node) obj).getNodeId()), Hex.toHexString(this.getNodeId()), FastByteComparisons.compare(((Node) obj).getNodeId(), this.getNodeId()));
         return FastByteComparisons.compare(((Node) obj).getNodeId(), this.getNodeId());
     }
 }

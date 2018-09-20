@@ -47,7 +47,7 @@ public class NodesCenter {
     }
 
     public void nodeInsert(Node node) {
-        this.dht.instertNode(node);
+        this.dht.insertNode(node);
     }
 
     public Node getSelfNode() {

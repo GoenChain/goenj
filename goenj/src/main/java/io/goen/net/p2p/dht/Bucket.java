@@ -1,15 +1,17 @@
 package io.goen.net.p2p.dht;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import io.goen.net.p2p.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.TreeSet;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import io.goen.net.p2p.Node;
-
 public class Bucket {
-
+    private static final Logger logger = LoggerFactory.getLogger("net.p2p");
 	private final int depth;
 	private final TreeSet<NodeContract> nodeContactsSet;
 	private final TreeSet<NodeContract> replacementCacheSet;
@@ -26,6 +28,7 @@ public class Bucket {
 
 	public synchronized void insert(NodeContract nodeContract) {
 		if (nodeContactsSet.contains(nodeContract)) {
+            logger.info("{} is in set", nodeContract.getNode());
 			NodeContract tmp = removeFromContacts(nodeContract.getNode());
 			tmp.refresh();
 			this.nodeContactsSet.add(tmp);
@@ -49,8 +52,9 @@ public class Bucket {
 				} else {
 					this.insertIntoReplacementCache(nodeContract);
 				}
-
+                logger.info("{} add to set with full", nodeContract.getNode());
 			} else {
+                logger.info("{} add to set not full", nodeContract.getNode());
 				this.nodeContactsSet.add(nodeContract);
 			}
 		}
@@ -88,6 +92,7 @@ public class Bucket {
 	private synchronized NodeContract removeFromContacts(Node node) {
 		for (NodeContract nc : this.nodeContactsSet) {
 			if (nc.getNode().equals(node)) {
+                logger.info("{}  is check", nc.getNode());
 				this.nodeContactsSet.remove(nc);
 				return nc;
 			}
