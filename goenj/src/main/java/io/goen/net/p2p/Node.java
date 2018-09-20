@@ -97,7 +97,6 @@ public class Node {
         if (!(obj instanceof Node)) {
             return false;
         }
-        logger.info("{} compare {} result {}", Hex.toHexString(((Node) obj).getNodeId()), Hex.toHexString(this.getNodeId()), FastByteComparisons.compare(((Node) obj).getNodeId(), this.getNodeId()));
         return FastByteComparisons.compare(((Node) obj).getNodeId(), this.getNodeId());
     }
 }
