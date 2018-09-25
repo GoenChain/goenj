@@ -31,13 +31,10 @@ public class DistributedHashTable {
         return this.selfNode;
     }
 
-    public synchronized Node insertNode(Node node) {
-        logger.info("start insert {}", node);
+    public synchronized void insertNode(Node node) {
+        logger.debug("start insert {}", node);
         this.buckets[this.getBucketId(node)].insert(node);
-        logger.info("end insert {}", node);
-        logger.info("============");
-        logger.info("now in set {}\n", getAllNodes());
-        return null;
+        logger.debug("end insert {}", node);
     }
 
     public synchronized List<Node> getClosest(int num) {
@@ -72,23 +69,42 @@ public class DistributedHashTable {
         return nodes;
     }
 
+    public synchronized final List<NodeContract> getAllNodeContracts() {
+        List<NodeContract> nodes = Lists.newArrayList();
+
+        for (Bucket bucket : this.buckets) {
+            for (NodeContract nc : bucket.getNode()) {
+                nodes.add(nc);
+            }
+        }
+
+        return nodes;
+    }
+
     public final int getBucketId(Node node) {
         int bucketId = KadKit.calcDistance(this.selfNode, node) - 1;
         return bucketId < 0 ? 0 : bucketId;
     }
 
-    public synchronized void dropNode(Node n) {
-        int bucketId = this.getBucketId(n);
-        this.buckets[bucketId].removeNode(n);
+    public final int getBucketIdByNodeContract(NodeContract nc) {
+        int bucketId = KadKit.calcDistance(this.selfNode, nc.getNode()) - 1;
+        return bucketId < 0 ? 0 : bucketId;
     }
 
-    public void dropNodes(List<Node> nodes) {
-        if (nodes.isEmpty()) {
-            return;
-        }
-        for (Node n : nodes) {
-            this.dropNode(n);
-        }
+    public synchronized void dropNode(NodeContract nc) {
+        int bucketId = this.getBucketIdByNodeContract(nc);
+        this.buckets[bucketId].removeNodeContact(nc);
+    }
+
+    public synchronized boolean containNode(Node node) {
+        int bucketId = this.getBucketId(node);
+        return this.buckets[bucketId].containsNode(node);
+    }
+
+    public synchronized void decrement(Node node) {
+        int bucketId = this.getBucketId(node);
+        NodeContract nodeContract = this.buckets[bucketId].getNodeContract(node);
+        nodeContract.decrementStaleCount();
     }
 
 }

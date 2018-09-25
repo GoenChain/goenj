@@ -3,15 +3,19 @@ package io.goen.net.p2p.dht;
 import io.goen.net.p2p.Node;
 import org.spongycastle.util.encoders.Hex;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class NodeContract implements Comparable<NodeContract> {
     private Node node;
     private long lastTouch;
-    private int staleCount;
+    private AtomicInteger staleCount;
+    private AtomicInteger checkCount;
 
     public NodeContract(Node node) {
         this.node = node;
         this.lastTouch = System.currentTimeMillis() / 1000L;
-        this.staleCount = 0;
+        this.staleCount = new AtomicInteger(0);
+        this.checkCount = new AtomicInteger(0);
     }
 
     public Node getNode() {
@@ -31,10 +35,14 @@ public class NodeContract implements Comparable<NodeContract> {
     }
 
     public int getStaleCount() {
-        return staleCount;
+        return staleCount.get();
     }
 
-    public void setStaleCount(int staleCount) {
+    public int getCheckCount() {
+        return checkCount.get();
+    }
+
+    public void setStaleCount(AtomicInteger staleCount) {
         this.staleCount = staleCount;
     }
 
@@ -42,17 +50,26 @@ public class NodeContract implements Comparable<NodeContract> {
         this.lastTouch = System.currentTimeMillis() / 1000L;
     }
 
-    public void resetStaleCount() {
-        this.staleCount = 0;
+    public void resetCount() {
+        this.staleCount.set(0);
+        this.checkCount.set(0);
     }
 
     public void incrementStaleCount() {
-        this.staleCount++;
+        this.staleCount.incrementAndGet();
+    }
+
+    public int incrementCheckCount() {
+        return this.checkCount.incrementAndGet();
+    }
+
+    public void decrementStaleCount() {
+        this.staleCount.decrementAndGet();
     }
 
     public void refresh() {
         this.updateTouchNow();
-        resetStaleCount();
+        resetCount();
     }
 
     @Override

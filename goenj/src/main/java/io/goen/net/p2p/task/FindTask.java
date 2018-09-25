@@ -21,7 +21,6 @@ public class FindTask implements Runnable {
 
     @Override
     public void run() {
-        logger.info("running running");
         Node selfNode = nodesCenter.getSelfNode();
         List<Node> allLists = nodesCenter.getAllLists();
         for (Node node : allLists) {
@@ -29,7 +28,7 @@ public class FindTask implements Runnable {
             findEvent.setExpires(System.currentTimeMillis() + 2000);
             findEvent.setNearDistance(selfNode.getNodeId());
             sender.sendMessage(findEvent, node);
-            logger.info("find node:{} ", node);
+            logger.info("find event send to node:{} ", node);
         }
     }
 }

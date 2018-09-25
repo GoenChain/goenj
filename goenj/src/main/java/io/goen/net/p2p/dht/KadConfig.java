@@ -10,6 +10,8 @@ public class KadConfig {
 
     public static final int STALE = 20;
 
-    public static final int EXPIRE = 10000;
+    public static final int EXPIRE = 1000;
+
+    public static final int CHECK_CYCLE = 1000;
 
 }

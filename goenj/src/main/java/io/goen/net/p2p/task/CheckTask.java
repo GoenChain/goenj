@@ -5,6 +5,7 @@ import io.goen.net.p2p.NodesCenter;
 import io.goen.net.p2p.P2PMessage;
 import io.goen.net.p2p.Sender;
 import io.goen.net.p2p.dht.KadConfig;
+import io.goen.net.p2p.dht.NodeContract;
 import io.goen.net.p2p.event.PingEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +27,22 @@ public class CheckTask implements Runnable {
     @Override
     public void run() {
         Node selfNode = nodesCenter.getSelfNode();
-        logger.info("running running");
-        List<Node> allLists = nodesCenter.getAllLists();
-        for (Node node : allLists) {
+        List<NodeContract> allLists = nodesCenter.getAllNCLists();
+        for (NodeContract nodeContract : allLists) {
+            //check invalid
+            logger.info("node:{},stale:{},check:{}", nodeContract.getNode(), nodeContract.getStaleCount(), nodeContract.getCheckCount());
+
+            if (nodeContract.incrementCheckCount() > KadConfig.CHECK_CYCLE) {
+                nodeContract.resetCount();
+            }
+
+            if (nodeContract.getStaleCount() > KadConfig.STALE || System.currentTimeMillis() / 1000 - nodeContract.getLastTouch() > KadConfig.EXPIRE) {
+                nodesCenter.nodeDrop(nodeContract);
+                logger.info("remove node{}", nodeContract.getNode());
+                continue;
+            }
+            //action ping
+            Node node = nodeContract.getNode();
             PingEvent pingEvent = new PingEvent();
             pingEvent.setExpires(System.currentTimeMillis() + KadConfig.EXPIRE);
             pingEvent.setFromIp(selfNode.getIp().getHostAddress());
@@ -38,6 +52,7 @@ public class CheckTask implements Runnable {
             pingEvent.setToPort(node.getPort());
             P2PMessage p2PMessage = new P2PMessage(new InetSocketAddress(node.getIp().getHostAddress(), node.getPort()),
                     pingEvent);
+            nodeContract.incrementStaleCount();
             sender.sendMessage(p2PMessage);
             logger.info("check node:{} ", node);
 

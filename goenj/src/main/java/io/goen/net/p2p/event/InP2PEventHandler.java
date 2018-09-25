@@ -41,22 +41,22 @@ public class InP2PEventHandler extends SimpleChannelInboundHandler<P2PMessage> {
             // PingEvent
             case 1:
                 handlePingEvent(node, (PingEvent) event);
-                logger.info("handle ping event");
+                logger.debug("handle ping event");
                 break;
             // PongEvent
             case 2:
                 handlePongEvent(node, (PongEvent) event);
-                logger.info("handle pong event");
+                logger.debug("handle pong event");
                 break;
             // FindEvent:
             case 3:
                 handleFindEvent(node, (FindEvent) event);
-                logger.info("handle find event");
+                logger.debug("handle find event");
                 break;
             // NodesEvent:
             case 4:
                 handleNodesEvent(node, (NodesEvent) event);
-                logger.info("handle nodes event");
+                logger.debug("handle nodes event");
                 break;
             default:
                 throw new RuntimeException("not known type:" + event.getType()[0]);
@@ -89,6 +89,12 @@ public class InP2PEventHandler extends SimpleChannelInboundHandler<P2PMessage> {
         List<Node> nodes = nodesEvent.getNodes();
         for (Node redNode : nodes) {
             if (FastByteComparisons.compareTo(redNode.getNodeId(), nodesCenter.getSelfNode().getNodeId()) == 0) {
+                continue;
+            }
+            //contain not insert but update stale
+            if (nodesCenter.containNode(redNode)) {
+                logger.debug("contain not insert node{}", redNode);
+                nodesCenter.decreamNodeStale(node);
                 continue;
             }
             nodesCenter.nodeInsert(redNode);
