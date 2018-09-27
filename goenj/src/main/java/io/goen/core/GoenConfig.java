@@ -26,12 +26,12 @@ public class GoenConfig {
 
 	private static final String SYSTEM_PRIVATEKEY = "system.privatekey";
 
-	private static final String P2P_DISCOVERY_BOUND_IP = "p2p.discovery.bound.ip";
-	private static final String P2P_DISCOVERY_PORT = "p2p.discovery.port";
-	private static final String P2P_START = "p2p.start";
-	private static final String P2P_FIND_START = "p2p.find.start";
-	private static final String P2P_CHECK_START = "p2p.check.start";
-	private static final String P2P_BOOT_PEERS = "p2p.boot.peers";
+	private static final String NET_BOUND_IP = "net.bound.ip";
+	private static final String NET_PORT = "net.port";
+	private static final String P2P_START = "net.p2p.start";
+	private static final String P2P_FIND_START = "net.p2p.find.start";
+	private static final String P2P_CHECK_START = "net.p2p.check.start";
+	private static final String P2P_BOOT_PEERS = "net.p2p.boot.peers";
 
 	private Config config;
 
@@ -81,7 +81,7 @@ public class GoenConfig {
 	public InetAddress boundHost() {
 		InetAddress host = null;
 		try {
-			host = InetAddress.getByName(config.getString(P2P_DISCOVERY_BOUND_IP));
+			host = InetAddress.getByName(config.getString(NET_BOUND_IP));
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
@@ -89,8 +89,8 @@ public class GoenConfig {
 	}
 
 	@PrintValue
-	public int p2pDiscoveryPort() {
-		return config.getInt(P2P_DISCOVERY_PORT);
+	public int boundPort() {
+		return config.getInt(NET_PORT);
 	}
 
 	@PrintValue
