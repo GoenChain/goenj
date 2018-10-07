@@ -34,7 +34,7 @@ public class NodesCenter {
     @PostConstruct
     public void init() {
         this.selfNode = new Node(HashUtil.sha256(config
-                .publicKey()), config.boundHost(), config.p2pDiscoveryPort());
+                .publicKey()), config.boundHost(), config.boundPort());
         this.dht = new DistributedHashTable(selfNode);
         this.priKey = config.systemKey();
     }
